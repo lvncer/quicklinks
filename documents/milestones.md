@@ -1,0 +1,113 @@
+# マイルストーン
+
+このプロジェクトを進めるときの「実装順」のざっくりなロードマップ。あとで変えても OK な前提で、今の時点の完成形から逆算している。
+
+## M0: コンセプト固定 & インフラ準備
+
+- **目的**: 方向性とインフラの前提を固めて、いつでもコードを書き始められる状態にする。
+- **やること**
+  - Supabase プロジェクト作成
+    - 本番兼開発にするか、dev/prod を分けるか方針を決める
+  - `personal-news` モノレポの初期化
+    - ルートに `README.md`, `.gitignore` を用意
+  - `infra/migrations/001_init_links.sql` を作成
+    - `links` / `digests` の最低限スキーマを定義
+  - `api/.env.example`, `web/.env.local.example` を用意
+    - `DATABASE_URL`, `NEXT_PUBLIC_API_BASE`, `SHARED_SECRET` などを定義
+
+## M1: API サーバー最小実装（リンク保存）
+
+- **目的**: 拡張や curl から URL を投げれば、Supabase 上の `links` に 1 行入る状態をつくる。
+- **やること**
+  - `api/` に Go + Gin プロジェクトを作成
+    - `cmd/server/main.go` で HTTP サーバー起動
+    - `internal/config`, `internal/db`（pgx）を実装
+  - `POST /api/links` を実装
+    - `X-QuickLink-Secret` の検証
+    - `LinkCreateRequest` のバリデーション
+    - `links` への INSERT と `id` の返却
+  - ローカルから curl / REST クライアントで動作確認
+
+## M2: ブラウザ拡張 MVP（スマホ長押し + PC 右クリック）
+
+- **目的**: 実際のブラウジング中に、スマホ長押し or PC 右クリックから URL を保存できるようにする。
+- **やること**
+  - `extension/` に拡張用プロジェクトを作成
+    - `manifest.json`（Manifest V3）
+    - `src/content-script.ts`（モバイル向け長押し検出 + `Save` ボタン）
+    - `src/context-menu.ts`（PC 向け `contextMenus` で「Save link ...」を追加）
+    - `src/background.ts`（必要なら API 呼び出しをここで行う）
+  - `X-QuickLink-Secret` をヘッダに付けて `POST /api/links` を叩く
+  - `chrome://extensions` から unpacked load して、実際のページで保存できるか確認
+
+## M3: Web ダッシュボード MVP（リンク一覧）
+
+- **目的**: 保存されたリンクを Web で一覧表示できるようにする。
+- **やること**
+  - `web/` に Next.js（app router）プロジェクトを作成
+    - `src/app/page.tsx` … 最近保存したリンク一覧
+  - API からの取得
+    - `GET {NEXT_PUBLIC_API_BASE}/api/links?limit=...` を叩いて一覧取得
+    - `lib/apiClient.ts` に簡単なフェッチラッパを作る
+  - UI は最小限で OK
+    - URL / タイトル / ドメイン / 保存日時 をリスト表示
+
+## M4: 検索・フィルタリング & タグ（使い勝手の向上）
+
+- **目的**: 溜まってきたリンクを「あとから探せる」状態にする。
+- **やること**
+  - API 側
+    - `GET /api/links` にクエリパラメータ（`from`, `to`, `domain`, `tag` など）を追加
+    - Supabase/Postgres のインデックスを調整（`user_id`, `saved_at`, `domain` など）
+  - Web 側
+    - `src/app/links/page.tsx` にフィルタ UI（期間 / ドメイン / タグ）を追加
+  - タグ機能の基礎
+    - 最初は `links.tags (text[])` のみでよい
+    - （必要になったら `tags` / `link_tags` テーブルに分離）
+
+## M5: ダイジェスト生成の土台（手動トリガ）
+
+- **目的**: とりあえず「ある期間のリンクをまとめたダイジェストページ」を手動で作れるようにする。
+- **やること**
+  - `digests` / `digest_items` テーブルを準備（必要ならマイグレーション追加）
+  - API 側
+    - `POST /api/digests/generate`（ユーザー・期間を指定してダイジェストを生成）
+    - `GET /api/digests` / `GET /api/digests/:slug` などの基本的な取得 API
+  - Web 側
+    - `src/app/digests/page.tsx` … 自分のダイジェスト一覧
+    - `src/app/digests/[slug].tsx` … 公開ダイジェスト表示ページ
+  - この段階では、要約はまだ AI なしでテンプレベースでも OK
+
+## M6: AI 要約 & 自動ジョブ（週次・月次）
+
+- **目的**: 週次・月次ダイジェストが自動で溜まっていく状態に近づける。
+- **やること**
+  - AI 連携
+    - OpenAI 等のクライアント実装
+    - 指定期間のリンクをまとめて要約するプロンプトを整える
+  - ジョブキュー / バックグラウンドワーカー
+    - `JOBS` テーブル or Redis キューを用意
+    - `worker` パッケージでジョブ実行ロジックを実装
+    - 「週次でダイジェスト生成」「OG/メタデータ取得」などをジョブ化
+  - スケジューリング
+    - 最初は手動トリガ（CLI / 管理画面ボタン）でも OK
+    - 後から cron 相当の仕組みを追加
+
+## M7: 本番運用・安全性の強化
+
+- **目的**: 他人に配っても安心して運用できる状態にする。
+- **やること**
+  - 認証 / 認可
+    - Supabase Auth と API サーバー / Web の紐付け
+    - `user_identifier` を正式な `user_id` に置き換え
+  - セキュリティ
+    - レートリミット
+    - 共有シークレットのローテーション / 管理方法の整理
+  - モニタリング / ロギング
+    - 主要エンドポイントのログ
+    - エラー通知（Sentry 等）
+  - デプロイパイプライン
+    - API / Web の CI / CD
+    - Supabase マイグレーションの適用フロー
+
+最初に着手するなら **M0 → M1 → M2 → M3** までを「v0.1 / 内輪向け」みたいなイメージでまとめてしまって、そのあと M4 以降は使いながら必要度高いところから順にやっていく想定。
