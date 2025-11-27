@@ -5,6 +5,7 @@ bin/
 *.out
 go.work
 go.work.sum
+server
 
 # Node / Next.js
 node_modules/

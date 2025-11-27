@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
 	"github.com/lvncer/quicklinks/api/internal/config"
 	"github.com/lvncer/quicklinks/api/internal/db"
@@ -17,17 +18,21 @@ import (
 )
 
 func main() {
+	godotenv.Load(".env")
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
 	ctx := context.Background()
+
 	pool, err := db.NewPool(ctx, cfg.DatabaseURL)
 	if err != nil {
 		log.Fatalf("failed to connect db: %v", err)
 	}
 	defer pool.Close()
+
+	log.Println("database connection established successfully")
 
 	r := gin.Default()
 

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -85,6 +86,7 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 		tags,
 	).Scan(&id)
 	if err != nil {
+		log.Printf("database error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to insert link", "detail": err.Error()})
 		return
 	}
