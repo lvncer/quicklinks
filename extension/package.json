@@ -1,0 +1,20 @@
+{
+  "name": "quicklinks-extension",
+  "version": "0.1.0",
+  "description": "QuickLinks browser extension - Save links with a long-press or right-click",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/background.ts src/content-script.ts src/options.ts --bundle --outdir=dist --format=esm --target=chrome120",
+    "watch": "esbuild src/background.ts src/content-script.ts src/options.ts --bundle --outdir=dist --format=esm --target=chrome120 --watch",
+    "clean": "rm -rf dist/*.js",
+    "generate-icons": "bun run scripts/generate-icons.ts"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.21.0",
+    "lucide-static": "^0.555.0",
+    "sharp": "^0.33.0",
+    "typescript": "^5.4.0"
+  }
+}

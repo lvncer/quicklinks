@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickLinks Settings</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", sans-serif;
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+        color: #e0e7ff;
+      }
+
+      .container {
+        max-width: 480px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        color: #a5b4fc;
+        margin-bottom: 32px;
+        font-size: 14px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(10px);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+
+      label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #c7d2fe;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 14px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+      }
+
+      input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      .help-text {
+        font-size: 12px;
+        color: #a5b4fc;
+        margin-top: 6px;
+        opacity: 0.8;
+      }
+
+      .button-group {
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+      }
+
+      button {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+      }
+
+      .btn-primary:hover {
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #e0e7ff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .status {
+        margin-top: 16px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        display: none;
+      }
+
+      .status.success {
+        display: block;
+        background: rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #6ee7b7;
+      }
+
+      .status.error {
+        display: block;
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+      }
+
+      .divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 20px 0;
+      }
+
+      .info-section {
+        margin-top: 24px;
+      }
+
+      .info-section h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #c7d2fe;
+        margin-bottom: 12px;
+      }
+
+      .info-section p {
+        font-size: 13px;
+        line-height: 1.6;
+        color: #a5b4fc;
+      }
+
+      .info-section code {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "SF Mono", Monaco, monospace;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>⚡ QuickLinks</h1>
+      <p class="subtitle">リンク保存拡張機能の設定</p>
+
+      <div class="card">
+        <div class="form-group">
+          <label for="apiBaseUrl">API Base URL</label>
+          <input
+            type="url"
+            id="apiBaseUrl"
+            placeholder="http://localhost:8080"
+          />
+          <p class="help-text">QuickLinks API サーバーの URL</p>
+        </div>
+
+        <div class="form-group">
+          <label for="sharedSecret">Shared Secret</label>
+          <input
+            type="password"
+            id="sharedSecret"
+            placeholder="Enter your secret key"
+          />
+          <p class="help-text">API 認証用の共有シークレット</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="form-group">
+          <label for="userIdentifier">User Identifier</label>
+          <input
+            type="text"
+            id="userIdentifier"
+            placeholder="Auto-generated"
+            readonly
+          />
+          <p class="help-text">自動生成される識別子（読み取り専用）</p>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn-secondary" id="testBtn">
+            🔍 Test
+          </button>
+          <button type="button" class="btn-primary" id="saveBtn">
+            💾 Save
+          </button>
+        </div>
+
+        <div class="status" id="status"></div>
+      </div>
+
+      <div class="info-section">
+        <h3>使い方</h3>
+        <p>
+          <strong>スマホ（モバイル）:</strong>
+          リンクを長押しすると「Save」ボタンが表示されます。<br /><br />
+          <strong>PC:</strong> リンクを右クリックして「Save link to
+          QuickLinks」を選択します。
+        </p>
+      </div>
+    </div>
+
+    <script src="dist/options.js"></script>
+  </body>
+</html>
