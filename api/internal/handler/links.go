@@ -28,6 +28,7 @@ func NewLinksHandler(db *pgxpool.Pool, secret string) *LinksHandler {
 func (h *LinksHandler) Register(r *gin.Engine) {
 	r.POST("/api/links", h.CreateLink)
 	r.GET("/api/links", h.GetLinks)
+	r.GET("/api/og", h.GetOGP)
 }
 
 func (h *LinksHandler) CreateLink(c *gin.Context) {
@@ -173,4 +174,39 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"links": links})
+}
+
+func (h *LinksHandler) GetOGP(c *gin.Context) {
+	secret := c.GetHeader("X-QuickLink-Secret")
+	if secret == "" || secret != h.SharedSecret {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	targetURL := c.Query("url")
+	if targetURL == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "url is required"})
+		return
+	}
+
+	// Validate URL
+	parsed, err := url.Parse(targetURL)
+	if err != nil || parsed.Host == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid url"})
+		return
+	}
+
+	// Fetch OGP
+	meta, err := service.FetchMetadata(targetURL)
+	if err != nil {
+		log.Printf("failed to fetch metadata: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch metadata"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"title":       meta.Title,
+		"description": meta.Description,
+		"image":       meta.Image,
+	})
 }

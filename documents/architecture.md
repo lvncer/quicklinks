@@ -34,18 +34,25 @@
       - **M3.1 以降**: Clerk の JWT トークンを検証し、`user_id` を取得。
       - リクエストボディ（`url`, `title`, `note`, `page`, `user_identifier`）をバリデーション。
       - `url` から簡易的に `domain` を抽出。
-      - OGP 情報（タイトル、Description、OG Image）を自動取得（M3 で実装済み）。
+      - OGP 情報（タイトル、Description、OG Image）を自動取得して DB に保存（M3 で実装済み、ただし表示時は `/api/og` でリアルタイム取得も可能）。
       - `links` テーブルに 1 レコード挿入し、生成された `id` を返す。
     - `GET /api/links`（M3 で実装済み、M3.1 で Clerk 認証に移行予定）
       - Web アプリ向けのリンク一覧取得 API。
       - **現状**: `X-QuickLink-Secret` ヘッダーで認証。
       - **M3.1 以降**: Clerk の JWT トークンで認証し、認証済みユーザーのリンクのみ返却。
       - クエリパラメータ（`limit`, `from`, `to`, `domain`, `tag` など）でフィルタリング可能。
+    - `GET /api/og`（M3 で実装済み、M3.1 で Clerk 認証に移行予定）
+      - OGP 情報（タイトル、Description、OG Image）を取得する API。
+      - クエリパラメータ `url` を受け取り、そのページのメタデータを返却。
+      - **現状**: `X-QuickLink-Secret` ヘッダーで認証。
+      - **M3.1 以降**: Clerk の JWT トークンで認証。
+      - `internal/service/metadata.go` の `FetchMetadata` 関数を使用してスクレイピング。
   - 構成イメージ：
     - `internal/config` … 環境変数（`PORT`, `DATABASE_URL`, `SHARED_SECRET`）の読み込み。
     - `internal/db` … Postgres（ローカル）または Supabase への接続プール管理、`InsertLink` などの簡易 DAO。
     - `internal/model` … `LinkCreateRequest` などのリクエスト / モデル定義。
-    - `internal/handler` … Gin のハンドラ群（`CreateLink` など）。
+    - `internal/handler` … Gin のハンドラ群（`CreateLink`, `GetLinks`, `GetOGP` など）。
+    - `internal/service` … ビジネスロジック（`FetchMetadata` など、OGP 取得処理）。
     - `cmd/server/main.go` … HTTP サーバー起動、Graceful Shutdown。
 
 - **Web アプリ（web, Next.js）**
@@ -55,12 +62,14 @@
     - 日付範囲 / ドメイン / タグなどによるフィルタ（段階的に追加）。
     - 将来的には、週次・月次ダイジェストの閲覧や共有ページのレンダリングもここで担当。
   - データ取得方法：
-    - **Next.js API Route 経由**: `/api/links` ルートを作成し、Go API へのプロキシとして機能。
-      - クライアント（useSWR）からは `/api/links` を叩く。
+    - **Next.js API Route 経由**: `/api/links` と `/api/og` ルートを作成し、Go API へのプロキシとして機能。
+      - クライアント（useSWR）からは `/api/links` と `/api/og` を叩く。
       - Next.js API Route が `SHARED_SECRET` を付与して Go API に転送（M3.1 以降は Clerk トークンを転送）。
       - **理由**: API キーをクライアントに露出させないため（全公開予定のためセキュリティが重要）。
     - **useSWR によるキャッシュ**: クライアントサイドでデータをキャッシュし、30 秒ごとに自動更新。
     - **OGP 情報の表示**: サムネイル画像と Description を表示（M3 で実装済み）。
+      - 表示時に Go API の `/api/og` を呼び出してリアルタイムで OGP 情報を取得。
+      - 各リンクカードが個別に OGP 情報を取得するため、非同期に読み込まれる。
   - ページ構成（最小）：
     - `/` … 最近保存されたリンクのリストページ。
       - 各リンクの `title` / `url` / `domain` / `og_image` / `description` / `saved_at` を表示。

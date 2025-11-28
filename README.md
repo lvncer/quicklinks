@@ -37,10 +37,13 @@
 
 - `POST /api/links` … リンクを保存（`X-QuickLink-Secret` ヘッダ必須、M3.1 で Clerk 認証に移行予定）
 - `GET /api/links` … リンク一覧取得（`X-QuickLink-Secret` ヘッダ必須、M3.1 で Clerk 認証に移行予定）
+- `GET /api/og` … OGP 情報取得（`X-QuickLink-Secret` ヘッダ必須、M3.1 で Clerk 認証に移行予定）
+  - クエリパラメータ: `url` (必須)
+  - レスポンス: `{ title, description, image }`
 
 ### 開発環境の一括起動
 
-APIサーバーとWebアプリを同時に起動するスクリプト:
+API サーバーと Web アプリを同時に起動するスクリプト:
 
 ```bash
 ./dev-scripts/run-all.sh

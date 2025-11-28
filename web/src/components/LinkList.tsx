@@ -1,17 +1,8 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import LinkCard from "@/components/LinkCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatDistanceToNow } from "date-fns";
-import { ja } from "date-fns/locale";
-import { ExternalLink, Globe, Calendar, RefreshCw } from "lucide-react";
-import Link from "next/link";
+import { RefreshCw } from "lucide-react";
 import useSWR from "swr";
 
 interface LinkItem {
@@ -109,78 +100,7 @@ export default function LinkList() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {links.map((link) => (
-        <Card
-          key={link.id}
-          className="group hover:shadow-md transition-all duration-300 hover:border-primary/50 overflow-hidden flex flex-col h-full bg-card/80 backdrop-blur-sm"
-        >
-          {/* OGP Image */}
-          {link.og_image && (
-            <div className="relative w-full h-40 overflow-hidden bg-muted border-b border-border/50">
-              <img
-                src={link.og_image}
-                alt={link.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
-              />
-            </div>
-          )}
-
-          <CardHeader className="pb-2 pt-4">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-1">
-                <Globe className="w-3 h-3" />
-                <span className="truncate max-w-[150px]">{link.domain}</span>
-              </div>
-            </div>
-            <CardTitle className="text-lg leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-              <Link
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline decoration-primary/50 underline-offset-4"
-              >
-                {link.title || "No Title"}
-              </Link>
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent className="flex-grow pb-2">
-            {/* Description from OGP */}
-            {link.description && (
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                {link.description}
-              </p>
-            )}
-
-            {/* User Note */}
-            {link.note && (
-              <div className="bg-secondary/50 p-2.5 rounded-md text-xs text-secondary-foreground/90 italic border border-secondary mt-1">
-                "{link.note}"
-              </div>
-            )}
-          </CardContent>
-
-          <CardFooter className="pt-2 pb-4 text-xs text-muted-foreground flex justify-between items-center border-t border-border/50 mt-auto bg-muted/20 px-6 py-3">
-            <div className="flex items-center gap-1.5" title={link.saved_at}>
-              <Calendar className="w-3 h-3" />
-              {formatDistanceToNow(new Date(link.saved_at), {
-                addSuffix: true,
-                locale: ja,
-              })}
-            </div>
-            <Link
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 hover:bg-primary/10 rounded-full text-primary transition-colors"
-              title="開く"
-            >
-              <ExternalLink className="w-4 h-4" />
-            </Link>
-          </CardFooter>
-        </Card>
+        <LinkCard key={link.id} link={link} />
       ))}
     </div>
   );

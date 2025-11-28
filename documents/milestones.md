@@ -53,10 +53,14 @@
     - 将来的な認証・認可やビジネスロジックの追加に備える
   - UI は最小限で OK
     - URL / タイトル / ドメイン / 保存日時 をリスト表示
-  - OGP 情報の自動取得
-    - リンク保存時にタイトル、Description、OG Image を自動取得
+  - OGP 情報の取得（Go API 経由）
+    - `GET /api/og` エンドポイントを Go API に実装
+    - 表示時に各リンクの URL から OGP 情報（タイトル、Description、OG Image）をリアルタイム取得
+    - リンク保存時にも OGP 情報を取得して DB に保存（フォールバック用）
+    - `internal/service/metadata.go` の `FetchMetadata` 関数を使用
   - useSWR によるキャッシュと自動更新
     - クライアントサイドでのデータ取得とリアルタイム更新
+    - 各リンクカードが個別に OGP 情報を取得するため、非同期に読み込まれる
 
 ## M3.1: Clerk 認証への完全移行
 
