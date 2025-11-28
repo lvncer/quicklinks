@@ -45,11 +45,21 @@ EOF
 )
 
 # curl で POST リクエストを送信
+echo "[POST] リンクを保存中..."
 curl -X POST "$API_BASE/api/links" \
   -H "Content-Type: application/json" \
   -H "X-QuickLink-Secret: $SHARED_SECRET" \
   -d "$REQUEST_BODY" \
-  -w "\n\nHTTP Status: %{http_code}\n" \
+  -w "\nHTTP Status: %{http_code}\n" \
+  -s
+
+echo ""
+
+# curl で GET リクエストを送信
+echo "[GET] リンク一覧を取得中..."
+curl -X GET "$API_BASE/api/links?limit=5" \
+  -H "X-QuickLink-Secret: $SHARED_SECRET" \
+  -w "\nHTTP Status: %{http_code}\n" \
   -s
 
 echo ""

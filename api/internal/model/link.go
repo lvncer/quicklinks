@@ -15,7 +15,9 @@ type Link struct {
 	ID             string    `json:"id"`
 	URL            string    `json:"url"`
 	Title          string    `json:"title"`
+	Description    string    `json:"description"`
 	Domain         string    `json:"domain"`
+	OGImage        string    `json:"og_image"`
 	PageURL        string    `json:"page_url"`
 	Note           string    `json:"note"`
 	UserIdentifier string    `json:"user_identifier"`

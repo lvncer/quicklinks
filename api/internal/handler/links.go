@@ -13,6 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/lvncer/quicklinks/api/internal/model"
+	"github.com/lvncer/quicklinks/api/internal/service"
 )
 
 type LinksHandler struct {
@@ -50,6 +51,25 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 	domain := parsed.Host
 	domain = strings.TrimPrefix(domain, "www.")
 
+	// Fetch OGP metadata
+	// Note: In production, this should probably be done asynchronously
+	// or in a background job to avoid slowing down the save request.
+	// For MVP, we do it synchronously but with a short timeout inside the service.
+	var description, ogImage string
+	meta, err := service.FetchMetadata(req.URL)
+	if err == nil {
+		description = meta.Description
+		ogImage = meta.Image
+		// If title was not provided or is just the URL, use OGP title
+		if req.Title == "" || req.Title == req.URL {
+			if meta.Title != "" {
+				req.Title = meta.Title
+			}
+		}
+	} else {
+		log.Printf("failed to fetch metadata for %s: %v", req.URL, err)
+	}
+
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
@@ -69,7 +89,7 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 			saved_at,
 			created_at
 		)
-		values ($1, $2, $3, '', $4, '', $5, $6, $7, '{}'::jsonb, now(), now())
+		values ($1, $2, $3, $4, $5, $6, $7, $8, $9, '{}'::jsonb, now(), now())
 		returning id
 	`
 
@@ -82,7 +102,9 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 		req.UserIdentifier,
 		req.URL,
 		req.Title,
+		description,
 		domain,
+		ogImage,
 		req.PageURL,
 		req.Note,
 		tags,
@@ -114,7 +136,7 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 	defer cancel()
 
 	query := `
-		SELECT id, user_identifier, url, title, domain, page_url, note, saved_at
+		SELECT id, user_identifier, url, title, description, domain, og_image, page_url, note, saved_at
 		FROM links
 		ORDER BY saved_at DESC
 		LIMIT $1
@@ -136,7 +158,9 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 			&link.UserIdentifier,
 			&link.URL,
 			&link.Title,
+			&link.Description,
 			&link.Domain,
+			&link.OGImage,
 			&link.PageURL,
 			&link.Note,
 			&link.SavedAt,
