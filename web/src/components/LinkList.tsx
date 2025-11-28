@@ -53,11 +53,6 @@ export default function LinkList() {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-6">
-        {" "}
-        {/* md:grid-cols-2 lg:grid-cols-3 を削除して縦積みに？いや、LinkListはグリッドのままで良いはずだが、LinkCardが横長になったので1カラムの方が良いかも？ */}
-        {/* 先輩は「レイアウトを自分好みに変えた」と言っていたので、グリッドレイアウトは維持されていると想定。ただし、LinkCardが横長になったので、1カラムか2カラムが適切かも。 */}
-        {/* 一旦、既存のグリッド設定 (md:grid-cols-2 lg:grid-cols-3) に戻すのが無難だが、LinkCardが横長なので1カラムの方が綺麗に見える。 */}
-        {/* しかし、LinkCard自体がレスポンシブ対応しているので、グリッドでも問題ないはず。 */}
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
@@ -65,7 +60,7 @@ export default function LinkList() {
           >
             <div className="flex flex-col md:flex-row h-full">
               <Skeleton className="w-full md:w-[280px] h-48 md:h-full shrink-0" />
-              <div className="flex flex-col flex-grow p-4">
+              <div className="flex flex-col p-4">
                 <div className="space-y-2 mb-4">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-4 w-1/2" />
@@ -105,9 +100,8 @@ export default function LinkList() {
     );
   }
 
-  // LinkCardが横長になったので、グリッドのカラム数を減らす（1カラム推奨）
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-2">
       {links.map((link) => (
         <div key={link.id} className="h-auto">
           <LinkCard link={link} />
