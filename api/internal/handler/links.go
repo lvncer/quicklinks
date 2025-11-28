@@ -89,10 +89,11 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 			note,
 			tags,
 			metadata,
+			published_at,
 			saved_at,
 			created_at
 		)
-		values ($1, $2, $3, $4, $5, $6, $7, $8, $9, '{}'::jsonb, now(), now())
+		values ($1, $2, $3, $4, $5, $6, $7, $8, $9, '{}'::jsonb, $10, now(), now())
 		returning id
 	`
 
@@ -111,6 +112,7 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 		req.PageURL,
 		req.Note,
 		tags,
+		publishedAt,
 	).Scan(&id)
 	if err != nil {
 		log.Printf("database error: %v", err)
@@ -139,9 +141,9 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 	defer cancel()
 
 	query := `
-		SELECT id, user_identifier, url, title, description, domain, og_image, page_url, note, saved_at
+		SELECT id, user_identifier, url, title, description, domain, og_image, page_url, note, saved_at, published_at
 		FROM links
-		ORDER BY saved_at DESC
+		ORDER BY COALESCE(published_at, saved_at) DESC
 		LIMIT $1
 	`
 
@@ -167,6 +169,7 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 			&link.PageURL,
 			&link.Note,
 			&link.SavedAt,
+			&link.PublishedAt,
 		)
 		if err != nil {
 			log.Printf("scan error: %v", err)
