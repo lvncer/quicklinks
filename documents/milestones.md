@@ -46,9 +46,11 @@
 - **やること**
   - `web/` に Next.js（app router）プロジェクトを作成
     - `src/app/page.tsx` … 最近保存したリンク一覧
-  - API からの取得
+  - API からの取得（API経由で統一）
     - `GET {NEXT_PUBLIC_API_BASE}/api/links?limit=...` を叩いて一覧取得
     - `lib/apiClient.ts` に簡単なフェッチラッパを作る
+    - 拡張機能と同じAPIエンドポイントを使用することで一貫性を保つ
+    - 将来的な認証・認可やビジネスロジックの追加に備える
   - UI は最小限で OK
     - URL / タイトル / ドメイン / 保存日時 をリスト表示
 

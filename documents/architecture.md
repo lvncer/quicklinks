@@ -27,14 +27,17 @@
 
 - **API サーバー（api, Go + Gin）**
 
-  - エンドポイント（最小）：
-    - `POST /api/links`
+  - エンドポイント：
+    - `POST /api/links`（M1で実装済み）
       - 拡張からのリンク保存リクエストを受け取る。
       - `X-QuickLink-Secret` を検証し、値が一致しない場合は `401 Unauthorized` を返す。
       - リクエストボディ（`url`, `title`, `note`, `page`, `user_identifier`）をバリデーション。
       - `url` から簡易的に `domain` を抽出。
       - `links` テーブルに 1 レコード挿入し、生成された `id` を返す。
-    - （将来）`GET /api/links` などで Web アプリ向けの一覧取得 API を追加予定。
+    - `GET /api/links`（M3で実装予定）
+      - Web アプリ向けのリンク一覧取得 API。
+      - クエリパラメータ（`limit`, `from`, `to`, `domain`, `tag` など）でフィルタリング可能。
+      - 拡張機能とWebアプリの両方で同じAPIエンドポイントを使用することで一貫性を保つ。
   - 構成イメージ：
     - `internal/config` … 環境変数（`PORT`, `DATABASE_URL`, `SHARED_SECRET`）の読み込み。
     - `internal/db` … Postgres（ローカル）または Supabase への接続プール管理、`InsertLink` などの簡易 DAO。
@@ -49,8 +52,10 @@
     - 日付範囲 / ドメイン / タグなどによるフィルタ（段階的に追加）。
     - 将来的には、週次・月次ダイジェストの閲覧や共有ページのレンダリングもここで担当。
   - データ取得方法：
-    - 開発初期は `NEXT_PUBLIC_API_BASE` 経由で Go API の `GET /api/links` から取得。
-    - 必要に応じて、読み取り専用の Supabase anon key で DB から直接読む構成にも切り替え可能。
+    - **API経由で統一**: `NEXT_PUBLIC_API_BASE` 経由で Go API の `GET /api/links` から取得。
+    - 拡張機能と同じAPIエンドポイントを使用することで一貫性を保つ。
+    - 将来的な認証・認可（M7）やビジネスロジックの追加に対応しやすい。
+    - キャッシュ、レート制限、ログなどの制御をAPI層で一元管理できる。
   - ページ構成（最小）：
     - `/` … 最近保存されたリンクのリストページ。
       - 各リンクの `title` / `url` / `domain` / `saved_at` を表示。
