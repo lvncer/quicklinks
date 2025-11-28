@@ -53,7 +53,30 @@
 
 ### ブラウザ拡張
 
-（未実装、M2 以降で追加予定）
+1. `extension/` ディレクトリに移動
+
+2. 依存関係をインストール:
+
+   ```bash
+   cd extension
+   bun install
+   ```
+
+3. ビルド:
+
+   ```bash
+   bun run build
+   ```
+
+4. Chrome にロード:
+   - `chrome://extensions/` を開く
+   - 「デベロッパーモード」を有効化
+   - 「パッケージ化されていない拡張機能を読み込む」で `extension` フォルダを選択
+
+5. 設定:
+   - 拡張機能のオプションページで API Base URL と Shared Secret を設定
+
+詳細は [`extension/README.md`](extension/README.md) を参照。
 
 ## ライセンス
 
