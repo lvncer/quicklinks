@@ -38,6 +38,20 @@
 - `POST /api/links` … リンクを保存（`X-QuickLink-Secret` ヘッダ必須、M3.1 で Clerk 認証に移行予定）
 - `GET /api/links` … リンク一覧取得（`X-QuickLink-Secret` ヘッダ必須、M3.1 で Clerk 認証に移行予定）
 
+### 開発環境の一括起動
+
+APIサーバーとWebアプリを同時に起動するスクリプト:
+
+```bash
+./dev-scripts/run-all.sh
+```
+
+停止する場合:
+
+```bash
+./dev-scripts/stop-all.sh
+```
+
 ### API テスト
 
 テストスクリプトを使う（推奨）
@@ -53,6 +67,7 @@
 1. `web/.env.local` を作成（`.env.local.example` を参考）
 
 2. 環境変数を設定:
+
    - `API_BASE_URL`: Go API サーバーの URL（例: `http://localhost:8080`）
    - `SHARED_SECRET`: API 認証用の共有シークレット（`api/.env` の `SHARED_SECRET` と同じ値）
 
