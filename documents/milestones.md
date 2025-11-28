@@ -55,12 +55,16 @@
     - URL / タイトル / ドメイン / 保存日時 をリスト表示
   - OGP 情報の取得（Go API 経由）
     - `GET /api/og` エンドポイントを Go API に実装
-    - 表示時に各リンクの URL から OGP 情報（タイトル、Description、OG Image）をリアルタイム取得
+    - 表示時に各リンクの URL から OGP 情報（タイトル、Description、OG Image、公開日/更新日）をリアルタイム取得
     - リンク保存時にも OGP 情報を取得して DB に保存（フォールバック用）
     - `internal/service/metadata.go` の `FetchMetadata` 関数を使用
+    - 記事の公開日/更新日（`published_at`）も取得し、DB に保存
   - useSWR によるキャッシュと自動更新
     - クライアントサイドでのデータ取得とリアルタイム更新
     - 各リンクカードが個別に OGP 情報を取得するため、非同期に読み込まれる
+  - 日付表示とソート
+    - リンク一覧は `published_at`（公開日）を優先し、なければ `saved_at`（保存日）でソート
+    - `LinkCard` ではリアルタイム取得した日付 > DB の公開日 > DB の保存日 の優先順位で表示
 
 ## M3.1: Clerk 認証への完全移行
 

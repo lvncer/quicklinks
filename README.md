@@ -39,7 +39,7 @@
 - `GET /api/links` … リンク一覧取得（`X-QuickLink-Secret` ヘッダ必須、M3.1 で Clerk 認証に移行予定）
 - `GET /api/og` … OGP 情報取得（`X-QuickLink-Secret` ヘッダ必須、M3.1 で Clerk 認証に移行予定）
   - クエリパラメータ: `url` (必須)
-  - レスポンス: `{ title, description, image }`
+  - レスポンス: `{ title, description, image, date }`（`date` は記事の公開日/更新日、取得できない場合は `null`）
 
 ### 開発環境の一括起動
 
