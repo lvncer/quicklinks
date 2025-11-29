@@ -28,21 +28,33 @@
 - **API サーバー（api, Go + Gin）**
 
   - エンドポイント：
-    - `POST /api/links`（M1 で実装済み）
+    - `POST /api/links`（M1 で実装済み、M3.1 で Clerk 認証に移行予定）
       - 拡張からのリンク保存リクエストを受け取る。
-      - `X-QuickLink-Secret` を検証し、値が一致しない場合は `401 Unauthorized` を返す。
+      - **現状**: `X-QuickLink-Secret` を検証し、値が一致しない場合は `401 Unauthorized` を返す。
+      - **M3.1 以降**: Clerk の JWT トークンを検証し、`user_id` を取得。
       - リクエストボディ（`url`, `title`, `note`, `page`, `user_identifier`）をバリデーション。
       - `url` から簡易的に `domain` を抽出。
+      - OGP 情報（タイトル、Description、OG Image、公開日/更新日）を自動取得して DB に保存（M3 で実装済み、ただし表示時は `/api/og` でリアルタイム取得も可能）。
       - `links` テーブルに 1 レコード挿入し、生成された `id` を返す。
-    - `GET /api/links`（M3 で実装予定）
+    - `GET /api/links`（M3 で実装済み、M3.1 で Clerk 認証に移行予定）
       - Web アプリ向けのリンク一覧取得 API。
+      - **現状**: `X-QuickLink-Secret` ヘッダーで認証。
+      - **M3.1 以降**: Clerk の JWT トークンで認証し、認証済みユーザーのリンクのみ返却。
       - クエリパラメータ（`limit`, `from`, `to`, `domain`, `tag` など）でフィルタリング可能。
-      - 拡張機能と Web アプリの両方で同じ API エンドポイントを使用することで一貫性を保つ。
+      - ソート順: `ORDER BY COALESCE(published_at, saved_at) DESC`（公開日を優先、なければ保存日で降順）。
+    - `GET /api/og`（M3 で実装済み、M3.1 で Clerk 認証に移行予定）
+      - OGP 情報（タイトル、Description、OG Image、公開日/更新日）を取得する API。
+      - クエリパラメータ `url` を受け取り、そのページのメタデータを返却。
+      - レスポンス: `{ title, description, image, date }`（`date` は `published_at` 相当の日付文字列、取得できない場合は `null`）。
+      - **現状**: `X-QuickLink-Secret` ヘッダーで認証。
+      - **M3.1 以降**: Clerk の JWT トークンで認証。
+      - `internal/service/metadata.go` の `FetchMetadata` 関数を使用してスクレイピング。
   - 構成イメージ：
     - `internal/config` … 環境変数（`PORT`, `DATABASE_URL`, `SHARED_SECRET`）の読み込み。
     - `internal/db` … Postgres（ローカル）または Supabase への接続プール管理、`InsertLink` などの簡易 DAO。
     - `internal/model` … `LinkCreateRequest` などのリクエスト / モデル定義。
-    - `internal/handler` … Gin のハンドラ群（`CreateLink` など）。
+    - `internal/handler` … Gin のハンドラ群（`CreateLink`, `GetLinks`, `GetOGP` など）。
+    - `internal/service` … ビジネスロジック（`FetchMetadata` など、OGP 取得処理）。
     - `cmd/server/main.go` … HTTP サーバー起動、Graceful Shutdown。
 
 - **Web アプリ（web, Next.js）**
@@ -52,13 +64,18 @@
     - 日付範囲 / ドメイン / タグなどによるフィルタ（段階的に追加）。
     - 将来的には、週次・月次ダイジェストの閲覧や共有ページのレンダリングもここで担当。
   - データ取得方法：
-    - **API 経由で統一**: `NEXT_PUBLIC_API_BASE` 経由で Go API の `GET /api/links` から取得。
-    - 拡張機能と同じ API エンドポイントを使用することで一貫性を保つ。
-    - 将来的な認証・認可（M7）やビジネスロジックの追加に対応しやすい。
-    - キャッシュ、レート制限、ログなどの制御を API 層で一元管理できる。
+    - **Next.js API Route 経由**: `/api/links` と `/api/og` ルートを作成し、Go API へのプロキシとして機能。
+      - クライアント（useSWR）からは `/api/links` と `/api/og` を叩く。
+      - Next.js API Route が `SHARED_SECRET` を付与して Go API に転送（M3.1 以降は Clerk トークンを転送）。
+      - **理由**: API キーをクライアントに露出させないため（全公開予定のためセキュリティが重要）。
+    - **useSWR によるキャッシュ**: クライアントサイドでデータをキャッシュし、30 秒ごとに自動更新。
+    - **OGP 情報の表示**: サムネイル画像、Description、公開日/更新日を表示（M3 で実装済み）。
+      - 表示時に Go API の `/api/og` を呼び出してリアルタイムで OGP 情報を取得。
+      - 各リンクカードが個別に OGP 情報を取得するため、非同期に読み込まれる。
+      - 日付表示の優先順位: リアルタイム取得した日付 > DB の `published_at` > DB の `saved_at`。
   - ページ構成（最小）：
     - `/` … 最近保存されたリンクのリストページ。
-      - 各リンクの `title` / `url` / `domain` / `saved_at` を表示。
+      - 各リンクの `title` / `url` / `domain` / `og_image` / `description` / `saved_at` を表示。
       - クリックで元ページへ遷移。
 
 - **データベース（Supabase / Postgres）**
@@ -83,6 +100,7 @@
         note TEXT
         tags TEXT[]
         metadata JSONB
+        published_at TIMESTAMPTZ "記事の公開日/更新日（OGP から取得）"
         saved_at TIMESTAMPTZ
         created_at TIMESTAMPTZ
       }
@@ -254,6 +272,7 @@ erDiagram
     text note
     text[] tags
     jsonb metadata
+    timestamptz published_at "記事の公開日/更新日（OGP から取得）"
     timestamptz saved_at
     timestamptz created_at
     timestamptz updated_at

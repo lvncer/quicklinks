@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/lvncer/quicklinks/api/internal/model"
+	"github.com/lvncer/quicklinks/api/internal/service"
 )
 
 type LinksHandler struct {
@@ -25,6 +27,8 @@ func NewLinksHandler(db *pgxpool.Pool, secret string) *LinksHandler {
 
 func (h *LinksHandler) Register(r *gin.Engine) {
 	r.POST("/api/links", h.CreateLink)
+	r.GET("/api/links", h.GetLinks)
+	r.GET("/api/og", h.GetOGP)
 }
 
 func (h *LinksHandler) CreateLink(c *gin.Context) {
@@ -48,6 +52,27 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 	domain := parsed.Host
 	domain = strings.TrimPrefix(domain, "www.")
 
+	// Fetch OGP metadata
+	// Note: In production, this should probably be done asynchronously
+	// or in a background job to avoid slowing down the save request.
+	// For MVP, we do it synchronously but with a short timeout inside the service.
+	var description, ogImage string
+	var publishedAt *time.Time
+	meta, err := service.FetchMetadata(req.URL)
+	if err == nil {
+		description = meta.Description
+		ogImage = meta.Image
+		publishedAt = meta.PublishedAt
+		// If title was not provided or is just the URL, use OGP title
+		if req.Title == "" || req.Title == req.URL {
+			if meta.Title != "" {
+				req.Title = meta.Title
+			}
+		}
+	} else {
+		log.Printf("failed to fetch metadata for %s: %v", req.URL, err)
+	}
+
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
@@ -64,10 +89,11 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 			note,
 			tags,
 			metadata,
+			published_at,
 			saved_at,
 			created_at
 		)
-		values ($1, $2, $3, '', $4, '', $5, $6, $7, '{}'::jsonb, now(), now())
+		values ($1, $2, $3, $4, $5, $6, $7, $8, $9, '{}'::jsonb, $10, now(), now())
 		returning id
 	`
 
@@ -80,10 +106,13 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 		req.UserIdentifier,
 		req.URL,
 		req.Title,
+		description,
 		domain,
+		ogImage,
 		req.PageURL,
 		req.Note,
 		tags,
+		publishedAt,
 	).Scan(&id)
 	if err != nil {
 		log.Printf("database error: %v", err)
@@ -92,4 +121,98 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"id": id})
+}
+
+func (h *LinksHandler) GetLinks(c *gin.Context) {
+	secret := c.GetHeader("X-QuickLink-Secret")
+	if secret == "" || secret != h.SharedSecret {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	// Parse limit query parameter (default: 50)
+	limitStr := c.DefaultQuery("limit", "50")
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit < 1 || limit > 100 {
+		limit = 50
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+	defer cancel()
+
+	query := `
+		SELECT id, user_identifier, url, title, description, domain, og_image, page_url, note, saved_at, published_at
+		FROM links
+		ORDER BY COALESCE(published_at, saved_at) DESC
+		LIMIT $1
+	`
+
+	rows, err := h.DB.Query(ctx, query, limit)
+	if err != nil {
+		log.Printf("database error: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch links"})
+		return
+	}
+	defer rows.Close()
+
+	links := []model.Link{}
+	for rows.Next() {
+		var link model.Link
+		err := rows.Scan(
+			&link.ID,
+			&link.UserIdentifier,
+			&link.URL,
+			&link.Title,
+			&link.Description,
+			&link.Domain,
+			&link.OGImage,
+			&link.PageURL,
+			&link.Note,
+			&link.SavedAt,
+			&link.PublishedAt,
+		)
+		if err != nil {
+			log.Printf("scan error: %v", err)
+			continue
+		}
+		links = append(links, link)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"links": links})
+}
+
+func (h *LinksHandler) GetOGP(c *gin.Context) {
+	secret := c.GetHeader("X-QuickLink-Secret")
+	if secret == "" || secret != h.SharedSecret {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	targetURL := c.Query("url")
+	if targetURL == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "url is required"})
+		return
+	}
+
+	// Validate URL
+	parsed, err := url.Parse(targetURL)
+	if err != nil || parsed.Host == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid url"})
+		return
+	}
+
+	// Fetch OGP
+	meta, err := service.FetchMetadata(targetURL)
+	if err != nil {
+		log.Printf("failed to fetch metadata: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch metadata"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"title":       meta.Title,
+		"description": meta.Description,
+		"image":       meta.Image,
+		"date":        meta.PublishedAt,
+	})
 }
