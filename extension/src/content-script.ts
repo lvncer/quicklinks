@@ -1,8 +1,3 @@
-/**
- * Content Script for QuickLinks extension
- * Handles mobile long-press detection and Save button display
- */
-
 import { showToast } from "./ui/toast";
 
 // Long-press configuration

@@ -1,7 +1,3 @@
-/**
- * Options page script for QuickLinks extension
- */
-
 import { getConfig, saveConfig, ensureUserIdentifier } from "./storage";
 
 const apiBaseUrlInput = document.getElementById(

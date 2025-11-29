@@ -6,8 +6,7 @@
   "scripts": {
     "build": "esbuild src/background.ts src/content-script.ts src/options.ts --bundle --outdir=dist --format=esm --target=chrome120",
     "watch": "esbuild src/background.ts src/content-script.ts src/options.ts --bundle --outdir=dist --format=esm --target=chrome120 --watch",
-    "clean": "rm -rf dist/*.js",
-    "generate-icons": "bun run scripts/generate-icons.ts"
+    "clean": "rm -rf dist/*.js"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.268",

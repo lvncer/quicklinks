@@ -1,7 +1,3 @@
-/**
- * Storage utilities for QuickLinks extension
- */
-
 export interface QuickLinksConfig {
   apiBaseUrl: string;
   sharedSecret: string;

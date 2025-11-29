@@ -1,7 +1,3 @@
-/**
- * API client for QuickLinks extension
- */
-
 import { getConfig } from "./storage";
 
 export interface SaveLinkRequest {

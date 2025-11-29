@@ -1,8 +1,3 @@
-/**
- * Background Service Worker for QuickLinks extension
- * Handles context menu (PC right-click) and API communication
- */
-
 import { saveLink } from "./api";
 import { getConfig, ensureUserIdentifier } from "./storage";
 
@@ -16,8 +11,6 @@ chrome.runtime.onInstalled.addListener(() => {
     title: "Save link to QuickLinks",
     contexts: ["link"],
   });
-
-  console.log("[QuickLinks] Context menu created");
 });
 
 // Handle context menu click (PC right-click)
@@ -52,11 +45,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         toastType: "success",
       });
     }
-
-    console.log("[QuickLinks] Link saved via context menu:", linkUrl);
   } catch (error) {
-    console.error("[QuickLinks] Failed to save link:", error);
-
     if (tab?.id) {
       chrome.tabs.sendMessage(tab.id, {
         type: "QUICKLINKS_TOAST",
@@ -107,5 +96,3 @@ async function handleSaveLinkMessage(
     };
   }
 }
-
-console.log("[QuickLinks] Background service worker loaded");

@@ -352,20 +352,19 @@ personal-news/
 │
 ├── infra/
 │   ├── migrations/
-│   │   ├── 001_init_links.sql
-│   │   ├── 002_add_digests.sql
+│   │   └── 001_init_links.sql
 │   └── supabase/
 │       ├── schema.sql              # Supabase に流したいスキーマ定義
 │       └── seed_dev.sql            # 開発用シードデータ
 │
 ├── extension/
-│   ├── manifest.json
-│   ├── package.json
-│   ├── tsconfig.json
+│   ├── manifest.json               # Chrome 拡張機能マニフェスト (V3)
+│   ├── options.html                # 設定ページ
 │   ├── src/
-│   │   ├── content-script.ts       # 長押し検出＋Saveボタン表示（モバイル向け）
-│   │   ├── context-menu.ts         # 右クリックメニュー（PC向け）
-│   │   ├── background.ts           # API 呼び出し、contextMenus の制御
+│   │   ├── background.ts           # API 呼び出し
+│   │   ├── content-script.ts       # 長押し検出＋Saveボタン表示
+│   │   ├── options.ts              # 設定ページのロジック
+│   │   ├── api.ts                  # API クライアント
 │   │   ├── storage.ts              # 設定保存（API ベース URL など）
 │   │   └── ui/
 │   │       └── toast.ts            # 保存完了トースト
@@ -375,7 +374,6 @@ personal-news/
 ├── api/                            # Go + Gin API サーバー
 │   ├── go.mod
 │   ├── go.sum
-│   ├── Dockerfile
 │   ├── .env.example
 │   ├── cmd/
 │   │   └── server/
