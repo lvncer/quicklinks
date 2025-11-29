@@ -1,5 +1,7 @@
 # Quicklinks
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 気になった Web ページの URL をブラウザ拡張から一瞬で保存して、あとから Web ダッシュボードで見返したり、将来は週次・月次ダイジェストにまとめられるようにするアプリ。
 
 ## 構成
@@ -121,7 +123,3 @@ API サーバーと Web アプリを同時に起動するスクリプト:
 - **将来（M3.1）**: Clerk の JWT トークンによる認証
 
 詳細は [`documents/milestones.md`](documents/milestones.md) の M3.1 を参照してください。
-
-## ライセンス
-
-（未定）
