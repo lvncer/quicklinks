@@ -1,9 +1,5 @@
 import { getConfig, saveConfig, clearAuthData } from "./storage";
 
-// Clerk OAuth configuration
-// These will be set via options page
-const CLERK_FRONTEND_API_URL_KEY = "clerkFrontendApiUrl";
-
 export interface AuthState {
   isAuthenticated: boolean;
   userId: string | null;
@@ -17,7 +13,31 @@ export interface AuthState {
 export async function getAuthState(): Promise<AuthState> {
   const config = await getConfig();
 
+  console.log("[QuickLinks] getAuthState - config:", {
+    hasToken: !!config.clerkToken,
+    hasUserId: !!config.clerkUserId,
+    tokenLength: config.clerkToken?.length || 0,
+    expiresAt: config.clerkTokenExpiresAt,
+    now: Date.now(),
+  });
+
   if (!config.clerkToken || !config.clerkUserId) {
+    console.log("[QuickLinks] getAuthState - No token or user ID");
+    return {
+      isAuthenticated: false,
+      userId: null,
+      token: null,
+      expiresAt: null,
+    };
+  }
+
+  // Validate token format (should be a JWT with 3 parts)
+  const tokenParts = config.clerkToken.split(".");
+  if (tokenParts.length !== 3) {
+    console.warn(
+      "[QuickLinks] getAuthState - Invalid token format, clearing auth"
+    );
+    await clearAuthData();
     return {
       isAuthenticated: false,
       userId: null,
@@ -28,6 +48,7 @@ export async function getAuthState(): Promise<AuthState> {
 
   // Check if token is expired
   if (config.clerkTokenExpiresAt && Date.now() > config.clerkTokenExpiresAt) {
+    console.log("[QuickLinks] getAuthState - Token expired, clearing auth");
     // Token expired, clear auth data
     await clearAuthData();
     return {
@@ -37,6 +58,28 @@ export async function getAuthState(): Promise<AuthState> {
       expiresAt: null,
     };
   }
+
+  // Verify token payload is valid
+  const tokenPayload = parseJwt(config.clerkToken);
+  const userId = tokenPayload?.sub as string | undefined;
+  if (!tokenPayload || !userId) {
+    console.warn(
+      "[QuickLinks] getAuthState - Invalid token payload, clearing auth"
+    );
+    await clearAuthData();
+    return {
+      isAuthenticated: false,
+      userId: null,
+      token: null,
+      expiresAt: null,
+    };
+  }
+
+  console.log("[QuickLinks] getAuthState - Authenticated:", {
+    userId: config.clerkUserId,
+    tokenSub: userId,
+    matches: config.clerkUserId === userId,
+  });
 
   return {
     isAuthenticated: true,
@@ -64,6 +107,12 @@ export async function getToken(): Promise<string | null> {
 
 /**
  * Start the Clerk OAuth login flow using chrome.identity.launchWebAuthFlow
+ *
+ * This opens the Web app's sign-in page, and after authentication,
+ * the user is redirected back with a JWT token that we can extract.
+ *
+ * Note: This requires the Web app to be configured to redirect back to the extension
+ * with the JWT token in the URL.
  */
 export async function login(): Promise<AuthState> {
   const config = await getConfig();
@@ -77,16 +126,17 @@ export async function login(): Promise<AuthState> {
   // Get the redirect URL for the extension
   const redirectUrl = chrome.identity.getRedirectURL();
 
-  // Build Clerk OAuth URL
-  // Clerk uses their hosted sign-in page which redirects back with a session token
-  const authUrl = new URL(`${config.clerkFrontendApiUrl}/oauth/authorize`);
-  authUrl.searchParams.set("redirect_uri", redirectUrl);
-  authUrl.searchParams.set("response_type", "code");
+  // Use Clerk's sign-in page with redirect
+  // The Web app should be configured to redirect back to this URL with the JWT
+  // Format: https://[frontend-api]/v1/client/sign_in?redirect_url=[redirect-url]
+  const authUrl = `${
+    config.clerkFrontendApiUrl
+  }/v1/client/sign_in?redirect_url=${encodeURIComponent(redirectUrl)}`;
 
   try {
     // Launch the auth flow
     const responseUrl = await chrome.identity.launchWebAuthFlow({
-      url: authUrl.toString(),
+      url: authUrl,
       interactive: true,
     });
 
@@ -96,51 +146,136 @@ export async function login(): Promise<AuthState> {
 
     // Parse the response URL to extract the token
     const url = new URL(responseUrl);
-    const code = url.searchParams.get("code");
-    const token = url.searchParams.get("token");
-    const sessionToken = url.hash
-      ? new URLSearchParams(url.hash.substring(1)).get("session_token")
-      : null;
 
-    // Try different token sources
-    const authToken = token || sessionToken || code;
+    // Try to extract JWT from various possible locations in the URL
+    let jwtToken =
+      url.searchParams.get("__token") ||
+      url.searchParams.get("token") ||
+      url.searchParams.get("jwt") ||
+      url.hash.match(/[#&]token=([^&]+)/)?.[1] ||
+      url.hash.match(/[#&]jwt=([^&]+)/)?.[1];
 
-    if (!authToken) {
-      throw new Error("No authentication token received");
+    // If no token in URL, the Web app might need to pass it differently
+    // For now, we'll try to get it from the session
+    if (!jwtToken) {
+      // Try to get session token and exchange it
+      const sessionTokenParam = url.searchParams.get("__session");
+      const sessionTokenHash = url.hash.match(/[#&]__session=([^&]+)/)?.[1];
+      // Get session token (may be null or undefined)
+      // Convert null to undefined for type compatibility
+      const sessionTokenRaw = sessionTokenParam ?? sessionTokenHash;
+      const sessionToken: string | undefined =
+        sessionTokenRaw === null
+          ? undefined
+          : (sessionTokenRaw as string | undefined);
+
+      if (sessionToken) {
+        // @ts-expect-error - sessionToken is string | undefined but TypeScript infers string | null
+        jwtToken = await exchangeSessionTokenForJWT(
+          sessionToken,
+          config.clerkFrontendApiUrl
+        );
+      }
     }
 
-    // Exchange code for session token if needed, or use the token directly
-    // For simplicity, we'll store the token directly
-    // In production, you might need to exchange the code for a proper JWT
+    if (!jwtToken) {
+      throw new Error(
+        "No authentication token received. " +
+          "Please ensure the Web app is configured to redirect with a token parameter."
+      );
+    }
 
-    // Decode the JWT to get user info (basic parsing)
-    const tokenPayload = parseJwt(authToken);
+    // Decode the JWT to get user info
+    const tokenPayload = parseJwt(jwtToken);
+    const userId = tokenPayload?.sub as string | undefined;
 
-    if (!tokenPayload || !tokenPayload.sub) {
-      throw new Error("Invalid token received");
+    if (!tokenPayload || !userId) {
+      throw new Error(
+        "Invalid JWT token received. Token does not contain user ID."
+      );
     }
 
     // Calculate expiration (default to 1 hour if not specified)
-    const expiresAt = tokenPayload.exp
-      ? tokenPayload.exp * 1000
-      : Date.now() + 60 * 60 * 1000;
+    const exp = tokenPayload.exp as number | undefined;
+    const expiresAt = exp ? exp * 1000 : Date.now() + 60 * 60 * 1000;
 
     // Save the auth data
     await saveConfig({
-      clerkToken: authToken,
-      clerkUserId: tokenPayload.sub,
+      clerkToken: jwtToken,
+      clerkUserId: userId,
       clerkTokenExpiresAt: expiresAt,
     });
 
+    // Verify the token was saved correctly
+    const savedConfig = await getConfig();
+    if (!savedConfig.clerkToken || savedConfig.clerkToken !== jwtToken) {
+      throw new Error("Failed to save authentication token. Please try again.");
+    }
+
     return {
       isAuthenticated: true,
-      userId: tokenPayload.sub,
-      token: authToken,
+      userId: userId,
+      token: jwtToken,
       expiresAt,
     };
   } catch (error) {
     console.error("Login failed:", error);
+    // Clear any partial auth data on error
+    await clearAuthData();
     throw error;
+  }
+}
+
+/**
+ * Exchange Clerk session token for JWT token
+ * This calls Clerk's API to get a JWT from the session token
+ */
+async function exchangeSessionTokenForJWT(
+  sessionToken: string | undefined,
+  frontendApiUrl: string
+): Promise<string | null> {
+  if (!sessionToken) {
+    return null;
+  }
+  try {
+    // Note: This endpoint might not be publicly accessible
+    // In a real implementation, you might need to call your own backend API
+    // that exchanges the session token for a JWT using Clerk's Backend API
+    const response = await fetch(
+      `${frontendApiUrl}/v1/client/sessions/${sessionToken}/tokens`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.warn(
+        "Failed to exchange session token via API, trying direct use"
+      );
+      // If API call fails, the session token might already be a JWT
+      // Try parsing it
+      const payload = parseJwt(sessionToken);
+      const userId = payload?.sub as string | undefined;
+      if (payload && userId) {
+        return sessionToken;
+      }
+      return null;
+    }
+
+    const data = await response.json();
+    return data.jwt || data.token || null;
+  } catch (error) {
+    console.error("Error exchanging session token:", error);
+    // If API call fails, try using the session token directly as JWT
+    const payload = parseJwt(sessionToken);
+    const userId = payload?.sub as string | undefined;
+    if (payload && userId) {
+      return sessionToken;
+    }
+    return null;
   }
 }
 

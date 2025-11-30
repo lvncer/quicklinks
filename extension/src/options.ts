@@ -97,14 +97,31 @@ async function handleLogin(): Promise<void> {
   loginBtn.textContent = "⏳ ログイン中...";
 
   try {
-    await login();
+    const authState = await login();
+    console.log("[QuickLinks] Login result:", authState);
+    
+    // Verify the auth state was saved correctly
+    const verifyState = await getAuthState();
+    console.log("[QuickLinks] Verified auth state:", verifyState);
+    
+    if (!verifyState.isAuthenticated || !verifyState.token) {
+      throw new Error("Login succeeded but token was not saved correctly. Please try again.");
+    }
+    
     showAuthStatus("Login successful! 🎉", "success");
-    await updateAuthUI();
+    
+    // Force UI update with a small delay to ensure storage is synced
+    setTimeout(async () => {
+      await updateAuthUI();
+    }, 100);
   } catch (error) {
+    console.error("[QuickLinks] Login error:", error);
     showAuthStatus(
       `Login failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       "error"
     );
+    // Update UI to show logged out state
+    await updateAuthUI();
   } finally {
     loginBtn.disabled = false;
     loginBtn.textContent = "🔑 ログイン";
