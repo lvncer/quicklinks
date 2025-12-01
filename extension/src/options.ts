@@ -107,7 +107,9 @@ function showAuthStatus(message: string, type: "success" | "error"): void {
 }
 
 // Event listeners
-saveBtn.addEventListener("click", handleSave);
+if (saveBtn) {
+  saveBtn.addEventListener("click", handleSave);
+}
 
 // Load config on page load
 loadConfig();
