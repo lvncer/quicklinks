@@ -292,7 +292,7 @@ export async function logout(): Promise<void> {
 /**
  * Parse a JWT token without validation (for client-side use only)
  */
-function parseJwt(token: string): Record<string, unknown> | null {
+export function parseJwt(token: string): Record<string, unknown> | null {
   try {
     const base64Url = token.split(".")[1];
     if (!base64Url) return null;

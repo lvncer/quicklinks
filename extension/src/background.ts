@@ -1,6 +1,6 @@
 import { saveLink } from "./api";
-import { getConfig } from "./storage";
-import { isAuthenticated, getAuthState, login, logout } from "./auth";
+import { getConfig, saveConfig } from "./storage";
+import { isAuthenticated, getAuthState, login, logout, parseJwt } from "./auth";
 
 // Context menu ID
 const CONTEXT_MENU_ID = "quicklinks-save-link";
@@ -91,18 +91,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "LOGIN") {
     login()
       .then((state) => sendResponse({ success: true, state }))
-      .catch((error) =>
-        sendResponse({ success: false, error: error.message })
-      );
+      .catch((error) => sendResponse({ success: false, error: error.message }));
     return true;
   }
 
   if (message.type === "LOGOUT") {
     logout()
       .then(() => sendResponse({ success: true }))
-      .catch((error) =>
-        sendResponse({ success: false, error: error.message })
-      );
+      .catch((error) => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
+
+  if (message.type === "QUICKLINKS_SAVE_AUTH") {
+    handleSaveAuthMessage(message)
+      .then((result) => sendResponse(result))
+      .catch((error) => sendResponse({ success: false, error: error.message }));
     return true;
   }
 });
@@ -129,6 +132,46 @@ async function handleSaveLinkMessage(
 
     return { success: true, id: result.id };
   } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+async function handleSaveAuthMessage(message: {
+  token: string;
+  userId?: string;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    const token = message.token;
+
+    if (!token) {
+      return { success: false, error: "Missing token" };
+    }
+
+    const payload = parseJwt(token) as any;
+
+    const userId: string | undefined =
+      message.userId || (payload && (payload.sub as string | undefined));
+
+    if (!payload || !userId) {
+      return { success: false, error: "Invalid token" };
+    }
+
+    const expValue = payload.exp;
+    const exp = typeof expValue === "number" ? expValue : undefined;
+    const expiresAt = exp ? exp * 1000 : Date.now() + 60 * 60 * 1000;
+
+    await saveConfig({
+      clerkToken: token,
+      clerkUserId: userId,
+      clerkTokenExpiresAt: expiresAt,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("[QuickLinks] Failed to save auth from Web:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

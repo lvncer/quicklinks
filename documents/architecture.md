@@ -24,7 +24,8 @@
     - `note`: 将来用に、選択テキスト等を載せられる余地
   - 拡張はローカルに保存している Clerk の JWT を使って、`fetch("{API_BASE}/api/links")` に JSON を POST。
   - HTTP ヘッダ `Authorization: Bearer <JWT>` を付与して認可を通す（共有シークレット方式は廃止）。
-  - JWT 自体は options ページからのログインフローで取得する。Chrome Identity API (`chrome.identity.launchWebAuthFlow`) で QuickLinks Web のサインインページを開き、Clerk で認証完了後、Web 側の専用コールバックルートが拡張のリダイレクト URL に JWT を付けてリダイレクトする。
+  - Clerk の JWT は主に QuickLinks Web アプリへのログイン時に同期される。Web 側が `window.postMessage` でトークンをブラウザに投げ、拡張の content script → background がそれを受け取って `chrome.storage.sync` に保存する（A 案）。
+  - 開発・トラブルシュート用に、options ページからの手動ログインフロー（Chrome Identity API (`chrome.identity.launchWebAuthFlow`) を使って Web 経由でサインインし、拡張に JWT を返すフロー）も併存させる想定。
 
 - **API サーバー（api, Go + Gin）**
 
@@ -136,6 +137,30 @@ flowchart LR
 ```
 
 ## データフロー
+
+0. **拡張と Web の認証同期フロー（A 案）**
+
+   - Clerk の「本当のログイン状態」は QuickLinks Web アプリ側が持ち、拡張はそれを後追いで同期する。
+   - ユーザーが Web ダッシュボードを開くと、Web は Clerk セッションから JWT を取得し、`window.postMessage` を通じて拡張に渡す。
+   - 拡張の content script がメッセージを受信し、`chrome.runtime.sendMessage` で background / 拡張本体に転送、JWT を `chrome.storage.sync` に保存する。
+   - 以降、拡張は `saveLink` などの API 呼び出し時に、この JWT を `Authorization: Bearer ...` として再利用する。
+
+   ```mermaid
+   sequenceDiagram
+     actor User as User
+     participant Web as Next.js Web App
+     participant Clerk as Clerk
+     participant CS as Content Script
+     participant Ext as Extension (background)
+
+     User->>Web: QuickLinks ダッシュボードを開く
+     Web->>Clerk: セッション確認 / ログイン
+     Clerk-->>Web: セッション / JWT
+     Web-->>CS: window.postMessage({ type: "QUICKLINKS_EXTENSION_AUTH", token })
+     CS-->>Ext: chrome.runtime.sendMessage({ type: "QUICKLINKS_SAVE_AUTH", token })
+     Ext->>Ext: JWT decode & 有効期限チェック
+     Ext->>Ext: chrome.storage.sync に { token, userId, expiresAt } を保存
+   ```
 
 1. **リンク保存フロー**
 
