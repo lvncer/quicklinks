@@ -47,6 +47,17 @@
         border-radius: 16px;
         padding: 24px;
         backdrop-filter: blur(10px);
+        margin-bottom: 20px;
+      }
+
+      .card-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #c7d2fe;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
 
       .form-group {
@@ -88,6 +99,11 @@
         color: rgba(255, 255, 255, 0.3);
       }
 
+      input:read-only {
+        background: rgba(0, 0, 0, 0.1);
+        cursor: default;
+      }
+
       .help-text {
         font-size: 12px;
         color: #a5b4fc;
@@ -116,13 +132,18 @@
         transform: scale(0.98);
       }
 
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
       .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         color: white;
         box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
       }
 
-      .btn-primary:hover {
+      .btn-primary:hover:not(:disabled) {
         box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
       }
 
@@ -132,8 +153,28 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
       }
 
-      .btn-secondary:hover {
+      .btn-secondary:hover:not(:disabled) {
         background: rgba(255, 255, 255, 0.15);
+      }
+
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+
+      .btn-danger:hover:not(:disabled) {
+        background: rgba(239, 68, 68, 0.3);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+      }
+
+      .btn-success:hover:not(:disabled) {
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
       }
 
       .status {
@@ -156,6 +197,49 @@
         background: rgba(239, 68, 68, 0.2);
         border: 1px solid rgba(239, 68, 68, 0.3);
         color: #fca5a5;
+      }
+
+      .auth-status {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        margin-bottom: 16px;
+      }
+
+      .auth-status-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      .auth-status-icon.logged-in {
+        background: rgba(16, 185, 129, 0.2);
+      }
+
+      .auth-status-icon.logged-out {
+        background: rgba(239, 68, 68, 0.2);
+      }
+
+      .auth-status-text {
+        flex: 1;
+      }
+
+      .auth-status-text strong {
+        display: block;
+        font-size: 14px;
+        color: #e0e7ff;
+      }
+
+      .auth-status-text span {
+        font-size: 12px;
+        color: #a5b4fc;
       }
 
       .divider {
@@ -188,6 +272,10 @@
         font-family: "SF Mono", Monaco, monospace;
         font-size: 12px;
       }
+
+      .hidden {
+        display: none !important;
+      }
     </style>
   </head>
   <body>
@@ -195,7 +283,42 @@
       <h1>⚡ QuickLinks</h1>
       <p class="subtitle">リンク保存拡張機能の設定</p>
 
+      <!-- Authentication Card -->
       <div class="card">
+        <div class="card-title">🔐 認証</div>
+
+        <div class="auth-status" id="authStatus">
+          <div class="auth-status-icon logged-out" id="authIcon">❌</div>
+          <div class="auth-status-text">
+            <strong id="authTitle">ログインしていません</strong>
+            <span id="authSubtitle">ログインしてリンクを保存しましょう</span>
+          </div>
+        </div>
+
+        <div id="loggedOutSection">
+          <div class="form-group">
+            <label for="clerkFrontendApiUrl">Web App URL</label>
+            <input
+              type="url"
+              id="clerkFrontendApiUrl"
+              placeholder="http://localhost:3000"
+            />
+            <p class="help-text">
+              QuickLinks Web アプリの URL（例: http://localhost:3000）。<br />
+              Web アプリでログインすると、拡張機能には自動的にログイン状態が同期されます。
+            </p>
+          </div>
+        </div>
+
+        <div id="loggedInSection" class="hidden"></div>
+
+        <div class="status" id="authStatusMessage"></div>
+      </div>
+
+      <!-- API Settings Card -->
+      <div class="card">
+        <div class="card-title">⚙️ API 設定</div>
+
         <div class="form-group">
           <label for="apiBaseUrl">API Base URL</label>
           <input
@@ -206,35 +329,9 @@
           <p class="help-text">QuickLinks API サーバーの URL</p>
         </div>
 
-        <div class="form-group">
-          <label for="sharedSecret">Shared Secret</label>
-          <input
-            type="password"
-            id="sharedSecret"
-            placeholder="Enter your secret key"
-          />
-          <p class="help-text">API 認証用の共有シークレット</p>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="form-group">
-          <label for="userIdentifier">User Identifier</label>
-          <input
-            type="text"
-            id="userIdentifier"
-            placeholder="Auto-generated"
-            readonly
-          />
-          <p class="help-text">自動生成される識別子（読み取り専用）</p>
-        </div>
-
         <div class="button-group">
-          <button type="button" class="btn-secondary" id="testBtn">
-            🔍 Test
-          </button>
           <button type="button" class="btn-primary" id="saveBtn">
-            💾 Save
+            💾 保存
           </button>
         </div>
 
@@ -247,7 +344,9 @@
           <strong>スマホ（モバイル）:</strong>
           リンクを長押しすると「Save」ボタンが表示されます。<br /><br />
           <strong>PC:</strong> リンクを右クリックして「Save link to
-          QuickLinks」を選択します。
+          QuickLinks」を選択します。<br /><br />
+          <strong>注意:</strong>
+          リンクを保存するには、まずログインが必要です。
         </p>
       </div>
     </div>

@@ -6,30 +6,30 @@ import (
 )
 
 type Config struct {
-	Port         string
-	DatabaseURL  string
-	SharedSecret string
-	Environment  string
+	Port           string
+	DatabaseURL    string
+	ClerkSecretKey string
+	Environment    string
 }
 
 func Load() (*Config, error) {
 	port := getenv("PORT", "8080")
 	dbURL := os.Getenv("DATABASE_URL")
-	secret := os.Getenv("SHARED_SECRET")
+	clerkSecret := os.Getenv("CLERK_SECRET_KEY")
 	env := getenv("ENVIRONMENT", "development")
 
 	if dbURL == "" {
 		return nil, fmt.Errorf("DATABASE_URL is required")
 	}
-	if secret == "" {
-		return nil, fmt.Errorf("SHARED_SECRET is required")
+	if clerkSecret == "" {
+		return nil, fmt.Errorf("CLERK_SECRET_KEY is required")
 	}
 
 	return &Config{
-		Port:         port,
-		DatabaseURL:  dbURL,
-		SharedSecret: secret,
-		Environment:  env,
+		Port:           port,
+		DatabaseURL:    dbURL,
+		ClerkSecretKey: clerkSecret,
+		Environment:    env,
 	}, nil
 }
 

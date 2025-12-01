@@ -12,28 +12,33 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/lvncer/quicklinks/api/internal/middleware"
 	"github.com/lvncer/quicklinks/api/internal/model"
 	"github.com/lvncer/quicklinks/api/internal/service"
 )
 
 type LinksHandler struct {
-	DB           *pgxpool.Pool
-	SharedSecret string
+	DB *pgxpool.Pool
 }
 
-func NewLinksHandler(db *pgxpool.Pool, secret string) *LinksHandler {
-	return &LinksHandler{DB: db, SharedSecret: secret}
+func NewLinksHandler(db *pgxpool.Pool) *LinksHandler {
+	return &LinksHandler{DB: db}
 }
 
-func (h *LinksHandler) Register(r *gin.Engine) {
-	r.POST("/api/links", h.CreateLink)
-	r.GET("/api/links", h.GetLinks)
-	r.GET("/api/og", h.GetOGP)
+func (h *LinksHandler) Register(r *gin.Engine, authMiddleware gin.HandlerFunc) {
+	api := r.Group("/api")
+	api.Use(authMiddleware)
+	{
+		api.POST("/links", h.CreateLink)
+		api.GET("/links", h.GetLinks)
+		api.GET("/og", h.GetOGP)
+	}
 }
 
 func (h *LinksHandler) CreateLink(c *gin.Context) {
-	secret := c.GetHeader("X-QuickLink-Secret")
-	if secret == "" || secret != h.SharedSecret {
+	// Get user_id from middleware (already authenticated)
+	userID := middleware.GetUserID(c)
+	if userID == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
@@ -79,7 +84,7 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 	var id string
 	query := `
 		insert into links (
-			user_identifier,
+			user_id,
 			url,
 			title,
 			description,
@@ -103,7 +108,7 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 	}
 
 	err = h.DB.QueryRow(ctx, query,
-		req.UserIdentifier,
+		userID, // Use authenticated user_id instead of request's user_identifier
 		req.URL,
 		req.Title,
 		description,
@@ -124,8 +129,9 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 }
 
 func (h *LinksHandler) GetLinks(c *gin.Context) {
-	secret := c.GetHeader("X-QuickLink-Secret")
-	if secret == "" || secret != h.SharedSecret {
+	// Get user_id from middleware (already authenticated)
+	userID := middleware.GetUserID(c)
+	if userID == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
@@ -141,13 +147,14 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 	defer cancel()
 
 	query := `
-		SELECT id, user_identifier, url, title, description, domain, og_image, page_url, note, saved_at, published_at
+		SELECT id, user_id, url, title, description, domain, og_image, page_url, note, saved_at, published_at
 		FROM links
+		WHERE user_id = $1
 		ORDER BY COALESCE(published_at, saved_at) DESC
-		LIMIT $1
+		LIMIT $2
 	`
 
-	rows, err := h.DB.Query(ctx, query, limit)
+	rows, err := h.DB.Query(ctx, query, userID, limit)
 	if err != nil {
 		log.Printf("database error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch links"})
@@ -160,7 +167,7 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 		var link model.Link
 		err := rows.Scan(
 			&link.ID,
-			&link.UserIdentifier,
+			&link.UserID,
 			&link.URL,
 			&link.Title,
 			&link.Description,
@@ -182,11 +189,8 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 }
 
 func (h *LinksHandler) GetOGP(c *gin.Context) {
-	secret := c.GetHeader("X-QuickLink-Secret")
-	if secret == "" || secret != h.SharedSecret {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
+	// Authentication is already handled by middleware
+	// No need to check user_id for OGP fetching
 
 	targetURL := c.Query("url")
 	if targetURL == "" {

@@ -66,31 +66,33 @@
     - リンク一覧は `published_at`（公開日）を優先し、なければ `saved_at`（保存日）でソート
     - `LinkCard` ではリアルタイム取得した日付 > DB の公開日 > DB の保存日 の優先順位で表示
 
-## M3.1: Clerk 認証への完全移行
+## M3.1: Clerk 認証への完全移行 ✅
 
 - **目的**: API キー方式から Clerk 認証に移行し、セキュアでスケーラブルな認証基盤を構築する。
+- **ステータス**: 実装完了
 - **認証タイミング**:
   - **ブラウザ拡張機能**: 初回起動時（または未認証時）に Clerk でログイン → トークンを Chrome Storage に保存 → 以降のリンク保存時に保存済みトークンを使用
   - **Web アプリ**: ページアクセス時に認証状態を確認 → 未認証ならログイン画面を表示 → 認証済みならデータを取得・表示
   - **リンク登録時**: 拡張機能側でトークンがあればそのまま使用、トークンがない/期限切れならログインを促す
-- **やること**
+- **実装内容**
+  - **データベース**
+    - `user_identifier` を `user_id` にリネーム（`infra/migrations/003_clerk_migration.sql`）
   - **拡張機能側**
-    - Clerk の認証トークンを取得する機能を追加
-    - 初回起動時にログインフローを実装
-    - トークンを Chrome Storage に保存・管理
-    - `Authorization: Bearer <token>` ヘッダーで API リクエストを送信
-    - `X-QuickLink-Secret` ヘッダーを廃止
+    - `chrome.identity.launchWebAuthFlow` による Clerk 認証フロー（`src/auth.ts`）
+    - トークンを Chrome Storage に保存・管理（`src/storage.ts`）
+    - `Authorization: Bearer <token>` ヘッダーで API リクエストを送信（`src/api.ts`）
+    - Options ページにログイン/ログアウト UI を追加（`options.html`, `src/options.ts`）
+    - `identity` パーミッションを追加（`manifest.json`）
   - **Go API 側**
-    - Clerk の JWT トークンを検証するミドルウェアを実装
-    - トークンから `user_id` を取得し、DB に保存
-    - `user_identifier` を正式な `user_id` に置き換え
-    - `SHARED_SECRET` による認証を廃止
+    - Clerk の JWT トークンを検証するミドルウェア（`internal/middleware/auth.go`）
+    - トークンから `user_id` を取得し、DB に保存（`internal/handler/links.go`）
+    - `CLERK_SECRET_KEY` 環境変数を使用（`internal/config/config.go`）
+    - サーバーエントリポイント（`cmd/server/main.go`）
   - **Web アプリ側**
-    - Clerk の認証状態を確認（ページアクセス時）
-    - 認証済みユーザーのみアクセス可能
-    - Next.js API Route で Clerk トークンを検証してから Go API に転送
-  - **データ移行**
-    - 既存の `user_identifier` を Clerk の `user_id` にマッピング（必要に応じて）
+    - `@clerk/nextjs` による認証（`src/app/layout.tsx`）
+    - 認証ミドルウェア（`src/middleware.ts`）
+    - Sign-in / Sign-up ページ
+    - API Route で Clerk トークンを取得して Go API に転送
 
 ## M3.5: 早期デプロイ（プライベート本番）
 
@@ -99,10 +101,11 @@
   - API 側
     - 既存の Go/Gin サーバーを Render / Fly.io / Railway などのマネージド環境に 1 インスタンスだけデプロイ
     - Supabase の `DATABASE_URL` を本番用環境変数として設定
-    - `SHARED_SECRET` も環境変数で設定（ローカルとは別値でも OK）
+    - `CLERK_SECRET_KEY` を環境変数で設定
   - Web 側
     - Next.js アプリを Vercel にデプロイ
     - `NEXT_PUBLIC_API_BASE` をデプロイ済み API の URL に向ける
+    - Clerk の環境変数を設定（`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`）
   - 運用メモ
     - 簡単なデプロイ手順を `README` や `documents/20251120_memo.md` にメモしておく
     - この段階ではドメインや CI/CD はまだ最低限で OK（手動デプロイでよい）
@@ -152,12 +155,12 @@
 
 - **目的**: 他人に配っても安心して運用できる状態にする。
 - **やること**
-  - 認証 / 認可
-    - Supabase Auth と API サーバー / Web の紐付け
-    - `user_identifier` を正式な `user_id` に置き換え
+  - 認証 / 認可（M3.1 で Clerk 認証は実装済み）
+    - Clerk の Organizations 機能を使った権限管理（必要に応じて）
+    - API エンドポイントごとの認可ルール整備
   - セキュリティ
     - レートリミット
-    - 共有シークレットのローテーション / 管理方法の整理
+    - Clerk の JWT トークン検証の強化
   - モニタリング / ロギング
     - 主要エンドポイントのログ
     - エラー通知（Sentry 等）

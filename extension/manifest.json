@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "QuickLinks",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Save links with a long-press (mobile) or right-click (PC)",
-  "permissions": ["contextMenus", "storage", "activeTab"],
+  "permissions": ["contextMenus", "storage", "activeTab", "identity"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "dist/background.js",
@@ -13,6 +13,11 @@
     {
       "matches": ["<all_urls>"],
       "js": ["dist/content-script.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://localhost:3000/*"],
+      "js": ["dist/web-auth-bridge.js"],
       "run_at": "document_idle"
     }
   ],

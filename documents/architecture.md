@@ -5,11 +5,14 @@
   - 気になった Web ページの URL を「ブラウザ拡張から一瞬で保存」して、あとから Web ダッシュボードで見返したり、将来は週次・月次ダイジェストにまとめられるようにする。
   - サーバーサイドは Go（Gin）、フロントは Next.js、データは Supabase/Postgres に集約する。
 
-- **主要コンポーネント**
-  - **ブラウザ拡張**（Chrome Manifest V3）
-  - **API サーバー**（Go + Gin）
-  - **Web アプリ**（Next.js）
-  - **データベース**（Supabase / Postgres）
+## 主要コンポーネント
+
+| コンポーネント | ディレクトリ | 技術                |
+| -------------- | ------------ | ------------------- |
+| ブラウザ拡張   | /extension   | Chrome Manifest V3  |
+| API サーバー   | /api         | Go + Gin            |
+| Web アプリ     | /web         | Next.js             |
+| データベース   |              | Supabase / Postgres |
 
 ## コンポーネント構成
 
@@ -22,32 +25,31 @@
     - `title`: リンクテキスト or ページタイトル
     - `page`: 保存操作をしたページの URL
     - `note`: 将来用に、選択テキスト等を載せられる余地
-  - `fetch("{API_BASE}/api/links")` で JSON を POST。
-  - ヘッダ `X-QuickLink-Secret` に共有シークレットを付与して、クローズドな環境でのみ利用する。
+  - 拡張はローカルに保存している Clerk の JWT を使って、`fetch("{API_BASE}/api/links")` に JSON を POST。
+  - HTTP ヘッダ `Authorization: Bearer <JWT>` を付与して認可を通す（共有シークレット方式は廃止）。
+  - Clerk の JWT は QuickLinks Web アプリへのログイン時に同期される。Web 側が `window.postMessage` でトークンをブラウザに投げ、拡張の content script → background がそれを受け取って `chrome.storage.sync` に保存する。
 
 - **API サーバー（api, Go + Gin）**
 
   - エンドポイント：
-    - `POST /api/links`（M1 で実装済み、M3.1 で Clerk 認証に移行予定）
+    - `POST /api/links`
       - 拡張からのリンク保存リクエストを受け取る。
-      - **現状**: `X-QuickLink-Secret` を検証し、値が一致しない場合は `401 Unauthorized` を返す。
-      - **M3.1 以降**: Clerk の JWT トークンを検証し、`user_id` を取得。
+      - リクエストヘッダの `Authorization: Bearer <Clerk JWT>` を検証し、トークンが無効または不足している場合は `401 Unauthorized` を返す。
+      - JWT の `sub` から `user_id` を取得し、そのユーザーのリンクとして保存する。
       - リクエストボディ（`url`, `title`, `note`, `page`, `user_identifier`）をバリデーション。
       - `url` から簡易的に `domain` を抽出。
       - OGP 情報（タイトル、Description、OG Image、公開日/更新日）を自動取得して DB に保存（M3 で実装済み、ただし表示時は `/api/og` でリアルタイム取得も可能）。
       - `links` テーブルに 1 レコード挿入し、生成された `id` を返す。
-    - `GET /api/links`（M3 で実装済み、M3.1 で Clerk 認証に移行予定）
+    - `GET /api/links`
       - Web アプリ向けのリンク一覧取得 API。
-      - **現状**: `X-QuickLink-Secret` ヘッダーで認証。
-      - **M3.1 以降**: Clerk の JWT トークンで認証し、認証済みユーザーのリンクのみ返却。
+      - Clerk の JWT トークンで認証し、認証済みユーザーのリンクのみ返却。
       - クエリパラメータ（`limit`, `from`, `to`, `domain`, `tag` など）でフィルタリング可能。
       - ソート順: `ORDER BY COALESCE(published_at, saved_at) DESC`（公開日を優先、なければ保存日で降順）。
-    - `GET /api/og`（M3 で実装済み、M3.1 で Clerk 認証に移行予定）
+    - `GET /api/og`
       - OGP 情報（タイトル、Description、OG Image、公開日/更新日）を取得する API。
       - クエリパラメータ `url` を受け取り、そのページのメタデータを返却。
       - レスポンス: `{ title, description, image, date }`（`date` は `published_at` 相当の日付文字列、取得できない場合は `null`）。
-      - **現状**: `X-QuickLink-Secret` ヘッダーで認証。
-      - **M3.1 以降**: Clerk の JWT トークンで認証。
+      - Clerk の JWT トークンで認証。
       - `internal/service/metadata.go` の `FetchMetadata` 関数を使用してスクレイピング。
   - 構成イメージ：
     - `internal/config` … 環境変数（`PORT`, `DATABASE_URL`, `SHARED_SECRET`）の読み込み。
@@ -66,8 +68,8 @@
   - データ取得方法：
     - **Next.js API Route 経由**: `/api/links` と `/api/og` ルートを作成し、Go API へのプロキシとして機能。
       - クライアント（useSWR）からは `/api/links` と `/api/og` を叩く。
-      - Next.js API Route が `SHARED_SECRET` を付与して Go API に転送（M3.1 以降は Clerk トークンを転送）。
-      - **理由**: API キーをクライアントに露出させないため（全公開予定のためセキュリティが重要）。
+      - Next.js API Route がサーバーサイドで Clerk の `auth()` から取得した JWT を `Authorization: Bearer <JWT>` として Go API に転送する。
+      - **理由**: ブラウザからは Clerk とのセッションだけを扱い、Go API の認証情報を直接クライアントに露出させないため（全公開予定のためセキュリティが重要）。
     - **useSWR によるキャッシュ**: クライアントサイドでデータをキャッシュし、30 秒ごとに自動更新。
     - **OGP 情報の表示**: サムネイル画像、Description、公開日/更新日を表示（M3 で実装済み）。
       - 表示時に Go API の `/api/og` を呼び出してリアルタイムで OGP 情報を取得。
@@ -90,7 +92,7 @@
     erDiagram
       links {
         id UUID PK
-        user_identifier TEXT "拡張ごとの識別子 or 将来のユーザー ID"
+        user_identifier TEXT "Clerk の user_id or 将来の別ユーザー ID"
         url TEXT
         title TEXT
         description TEXT "予備"
@@ -138,6 +140,30 @@ flowchart LR
 
 ## データフロー
 
+0. **拡張と Web の認証同期フロー（A 案）**
+
+   - Clerk の「本当のログイン状態」は QuickLinks Web アプリ側が持ち、拡張はそれを後追いで同期する。
+   - ユーザーが Web ダッシュボードを開くと、Web は Clerk セッションから JWT を取得し、`window.postMessage` を通じて拡張に渡す。
+   - 拡張の content script がメッセージを受信し、`chrome.runtime.sendMessage` で background / 拡張本体に転送、JWT を `chrome.storage.sync` に保存する。
+   - 以降、拡張は `saveLink` などの API 呼び出し時に、この JWT を `Authorization: Bearer ...` として再利用する。
+
+   ```mermaid
+   sequenceDiagram
+     actor User as User
+     participant Web as Next.js Web App
+     participant Clerk as Clerk
+     participant CS as Content Script
+     participant Ext as Extension (background)
+
+     User->>Web: QuickLinks ダッシュボードを開く
+     Web->>Clerk: セッション確認 / ログイン
+     Clerk-->>Web: セッション / JWT
+     Web-->>CS: window.postMessage({ type: "QUICKLINKS_EXTENSION_AUTH", token })
+     CS-->>Ext: chrome.runtime.sendMessage({ type: "QUICKLINKS_SAVE_AUTH", token })
+     Ext->>Ext: JWT decode & 有効期限チェック
+     Ext->>Ext: chrome.storage.sync に { token, userId, expiresAt } を保存
+   ```
+
 1. **リンク保存フロー**
 
    - ユーザーが任意の Web ページでリンクを長押し。
@@ -154,8 +180,8 @@ flowchart LR
     participant DB as Supabase(Postgres)
 
     User->>Ext: リンクを長押し / 右クリックして Save 操作
-    Ext->>API: POST /api/links (url, title, page, note, user_identifier?)
-    API->>API: X-QuickLink-Secret 検証 & バリデーション
+    Ext->>API: POST /api/links (Authorization: Bearer <Clerk JWT>, url, title, page, note)
+    API->>API: Clerk JWT 検証 & バリデーション
     API->>DB: INSERT INTO links (...)
     DB-->>API: 新しいリンク ID
     API-->>Ext: 200 OK { id }
@@ -216,15 +242,15 @@ flowchart LR
 - **ローカル開発**
 
   - API / Web はローカルで起動し、DB は Supabase（クラウド）に直接接続する。
-    - `api`: Go/Gin サーバー（`DATABASE_URL` に Supabase の接続文字列を指定し、`SHARED_SECRET` を `.env` から読み込む）。
+    - `api`: Go/Gin サーバー（`DATABASE_URL` に Supabase の接続文字列を指定し、Clerk 関連の設定値を `.env` から読み込む）。
     - `web`: Next.js アプリ（`NEXT_PUBLIC_API_BASE` でローカル API の URL を参照）。
   - スキーマ変更は Supabase 側に対して実行する。誤って本番データを壊さないように、破壊的な変更は専用ブランチ or 開発用プロジェクトで試してから本番に反映する。
 
-- **本番構成（イメージ）**
+  - **本番構成（イメージ）**
   - DB: Supabase（Postgres）。
   - API サーバー: コンテナ（Fly.io / Render / Railway など）もしくは Vercel Serverless Functions（要調整）。
   - Web アプリ: Vercel などに Next.js をデプロイ。
-  - 拡張: Chrome Web Store などで配布（当面は共有シークレットでクローズド運用）。
+  - 拡張: Chrome Web Store などで配布（Clerk ログイン必須のクローズド運用）。
 
 ## 今後の拡張の方向性（メモ）
 

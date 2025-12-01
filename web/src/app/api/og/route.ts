@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
 export async function GET(req: NextRequest) {
   const apiBaseUrl = process.env.API_BASE_URL;
-  const sharedSecret = process.env.SHARED_SECRET;
 
-  if (!apiBaseUrl || !sharedSecret) {
+  if (!apiBaseUrl) {
     return NextResponse.json(
       { error: "Server configuration error" },
       { status: 500 }
     );
+  }
+
+  // Get auth token from Clerk
+  const { getToken } = await auth();
+  const token = await getToken();
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const searchParams = req.nextUrl.searchParams;
@@ -24,7 +32,7 @@ export async function GET(req: NextRequest) {
       {
         method: "GET",
         headers: {
-          "X-QuickLink-Secret": sharedSecret,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         next: { revalidate: 3600 }, // 1時間キャッシュ

@@ -1,11 +1,11 @@
 import { getConfig } from "./storage";
+import { getToken, isAuthenticated } from "./auth";
 
 export interface SaveLinkRequest {
   url: string;
   title: string;
   page: string;
   note?: string;
-  user_identifier?: string;
   tags?: string[];
 }
 
@@ -19,6 +19,22 @@ export interface ApiError {
 }
 
 /**
+ * Get authorization headers for API requests
+ */
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const token = await getToken();
+
+  if (!token) {
+    throw new Error("Not authenticated. Please log in first.");
+  }
+
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
+
+/**
  * Save a link to the QuickLinks API
  */
 export async function saveLink(
@@ -26,20 +42,22 @@ export async function saveLink(
 ): Promise<SaveLinkResponse> {
   const config = await getConfig();
 
-  if (!config.sharedSecret) {
-    throw new Error(
-      "Shared secret not configured. Please set up the extension."
-    );
+  // Check if authenticated
+  if (!(await isAuthenticated())) {
+    throw new Error("Not authenticated. Please log in from the options page.");
   }
+
+  const headers = await getAuthHeaders();
 
   const response = await fetch(`${config.apiBaseUrl}/api/links`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-QuickLink-Secret": config.sharedSecret,
-    },
+    headers,
     body: JSON.stringify(request),
   });
+
+  if (response.status === 401) {
+    throw new Error("Session expired. Please log in again from the options page.");
+  }
 
   if (!response.ok) {
     const errorData = await response
