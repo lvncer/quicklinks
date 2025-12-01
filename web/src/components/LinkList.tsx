@@ -5,23 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw } from "lucide-react";
 import useSWR from "swr";
 import { useAuth } from "@clerk/nextjs";
-
-interface LinkItem {
-  id: string;
-  url: string;
-  title: string;
-  description: string;
-  domain: string;
-  og_image: string;
-  page_url: string;
-  note: string;
-  user_identifier: string;
-  saved_at: string;
-}
-
-interface LinksResponse {
-  links: LinkItem[];
-}
+import { LinksResponse } from "@/types/links";
 
 export default function LinkList() {
   const { getToken } = useAuth();

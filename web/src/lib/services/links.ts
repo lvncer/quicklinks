@@ -1,4 +1,4 @@
-import type { GetLinksResponse, Link } from "@/types/links";
+import type { LinksResponse, Link } from "@/types/links";
 
 /**
  * APIからリンク一覧を取得する (Server Component用サービス)
@@ -36,7 +36,7 @@ export async function getLinks(limit: number = 50): Promise<Link[]> {
       throw new Error("Failed to fetch links");
     }
 
-    const data: GetLinksResponse = await res.json();
+    const data: LinksResponse = await res.json();
     return data.links || [];
   } catch (error) {
     console.error("Failed to fetch links:", error);

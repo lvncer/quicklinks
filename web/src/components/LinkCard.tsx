@@ -15,27 +15,8 @@ import Link from "next/link";
 import useSWR from "swr";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
-
-interface LinkItem {
-  id: string;
-  url: string;
-  title: string;
-  description: string; // DBからの値（あれば）
-  domain: string;
-  og_image: string; // DBからの値（あれば）
-  page_url: string;
-  note: string;
-  user_identifier: string;
-  saved_at: string;
-  published_at?: string; // 記事の公開日（あれば）
-}
-
-interface OgData {
-  title: string;
-  description: string;
-  image: string;
-  date?: string;
-}
+import { Link as LinkItem } from "@/types/links";
+import { OgData } from "@/types/ogps";
 
 export default function LinkCard({ link }: { link: LinkItem }) {
   const { getToken } = useAuth();
