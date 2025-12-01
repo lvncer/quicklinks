@@ -13,6 +13,8 @@ import { ja } from "date-fns/locale";
 import { ExternalLink, Globe, Calendar, ImageIcon, Clock } from "lucide-react";
 import Link from "next/link";
 import useSWR from "swr";
+import { useAuth } from "@clerk/nextjs";
+import Image from "next/image";
 
 interface LinkItem {
   id: string;
@@ -35,13 +37,39 @@ interface OgData {
   date?: string;
 }
 
-const ogFetcher = (url: string) => fetch(url).then((res) => res.json());
-
 export default function LinkCard({ link }: { link: LinkItem }) {
+  const { getToken } = useAuth();
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE;
+
+  const apiUrl =
+    apiBaseUrl && link.url
+      ? `${apiBaseUrl}/api/og?url=${encodeURIComponent(link.url)}`
+      : null;
+
+  const ogFetcher = async (url: string) => {
+    const token = await getToken();
+
+    if (!token) {
+      throw new Error("Unauthorized");
+    }
+
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch metadata: ${res.status}`);
+    }
+
+    return res.json();
+  };
+
   // リアルタイムでOGPを取得
   const { data: ogData, isLoading } = useSWR<OgData>(
-    `/api/og?url=${encodeURIComponent(link.url)}`,
-    ogFetcher,
+    apiUrl,
+    apiUrl ? ogFetcher : null,
     {
       revalidateOnFocus: false,
       dedupingInterval: 60000, // 1分間は再取得しない
@@ -67,9 +95,11 @@ export default function LinkCard({ link }: { link: LinkItem }) {
             {isLoading ? (
               <Skeleton className="w-full h-full absolute inset-0" />
             ) : displayImage ? (
-              <img
+              <Image
                 src={displayImage}
                 alt={displayTitle}
+                width={500}
+                height={500}
                 className="w-full h-full object-cover transition-transform duration-500 absolute inset-0 rounded-lg"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = "none";
@@ -129,7 +159,7 @@ export default function LinkCard({ link }: { link: LinkItem }) {
             {/* User Note */}
             {link.note && (
               <div className="bg-secondary/50 p-2.5 rounded-md text-xs text-secondary-foreground/90 italic border border-secondary mt-1">
-                "{link.note}"
+                {link.note}
               </div>
             )}
           </CardContent>

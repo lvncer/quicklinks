@@ -4,6 +4,7 @@ import LinkCard from "@/components/LinkCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw } from "lucide-react";
 import useSWR from "swr";
+import { useAuth } from "@clerk/nextjs";
 
 interface LinkItem {
   id: string;
@@ -22,12 +23,35 @@ interface LinksResponse {
   links: LinkItem[];
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 export default function LinkList() {
+  const { getToken } = useAuth();
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE;
+
+  const apiUrl = apiBaseUrl ? `${apiBaseUrl}/api/links?limit=50` : null;
+
+  const fetcher = async (url: string) => {
+    const token = await getToken();
+
+    if (!token) {
+      throw new Error("Unauthorized");
+    }
+
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch links: ${res.status}`);
+    }
+
+    return res.json();
+  };
+
   const { data, error, isLoading, mutate } = useSWR<LinksResponse>(
-    "/api/links",
-    fetcher,
+    apiUrl,
+    apiUrl ? fetcher : null,
     {
       refreshInterval: 30000, // 30秒ごとに自動更新
       revalidateOnFocus: true,
