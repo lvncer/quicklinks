@@ -36,9 +36,27 @@ window.addEventListener("message", (event: MessageEvent) => {
     return;
   }
 
-  chrome.runtime.sendMessage({
-    type: "QUICKLINKS_SAVE_AUTH",
-    token,
-    userId,
-  });
+  try {
+    chrome.runtime.sendMessage(
+      {
+        type: "QUICKLINKS_SAVE_AUTH",
+        token,
+        userId,
+      },
+      () => {
+        const err = chrome.runtime.lastError;
+        if (err) {
+          console.warn(
+            "[QuickLinks] Failed to send auth to background:",
+            err.message
+          );
+        }
+      }
+    );
+  } catch (error) {
+    console.warn(
+      "[QuickLinks] Failed to send auth to background (exception):",
+      error
+    );
+  }
 });

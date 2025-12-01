@@ -16,6 +16,11 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // Handle context menu click (PC right-click)
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  console.log("[QuickLinks] contextMenus.onClicked", {
+    info,
+    tabId: tab?.id,
+  });
+
   if (info.menuItemId !== CONTEXT_MENU_ID) return;
 
   const linkUrl = info.linkUrl;
@@ -27,12 +32,25 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   try {
     // Check authentication
     if (!(await isAuthenticated())) {
+      console.log("[QuickLinks] Context menu clicked but not authenticated");
       if (tab?.id) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: "QUICKLINKS_TOAST",
-          message: "Please log in first from the extension options",
-          toastType: "error",
-        });
+        chrome.tabs.sendMessage(
+          tab.id,
+          {
+            type: "QUICKLINKS_TOAST",
+            message: "Please log in first from the extension options",
+            toastType: "error",
+          },
+          () => {
+            const err = chrome.runtime.lastError;
+            if (err) {
+              console.warn(
+                "[QuickLinks] Failed to send not-authenticated toast:",
+                err.message
+              );
+            }
+          }
+        );
       }
       return;
     }
@@ -50,19 +68,46 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
     // Notify content script to show toast
     if (tab?.id) {
-      chrome.tabs.sendMessage(tab.id, {
-        type: "QUICKLINKS_TOAST",
-        message: "Link saved!",
-        toastType: "success",
-      });
+      console.log("[QuickLinks] Sending success toast to tab", tab.id);
+      chrome.tabs.sendMessage(
+        tab.id,
+        {
+          type: "QUICKLINKS_TOAST",
+          message: "Link saved!",
+          toastType: "success",
+        },
+        () => {
+          const err = chrome.runtime.lastError;
+          if (err) {
+            console.warn(
+              "[QuickLinks] Failed to send success toast:",
+              err.message
+            );
+          }
+        }
+      );
     }
   } catch (error) {
+    console.error("[QuickLinks] Error while saving from context menu", error);
     if (tab?.id) {
-      chrome.tabs.sendMessage(tab.id, {
-        type: "QUICKLINKS_TOAST",
-        message: error instanceof Error ? error.message : "Failed to save link",
-        toastType: "error",
-      });
+      chrome.tabs.sendMessage(
+        tab.id,
+        {
+          type: "QUICKLINKS_TOAST",
+          message:
+            error instanceof Error ? error.message : "Failed to save link",
+          toastType: "error",
+        },
+        () => {
+          const err = chrome.runtime.lastError;
+          if (err) {
+            console.warn(
+              "[QuickLinks] Failed to send error toast:",
+              err.message
+            );
+          }
+        }
+      );
     }
   }
 });

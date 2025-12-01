@@ -251,6 +251,7 @@ function handleDocumentClick(event: Event): void {
 
 // Listen for toast messages from background script
 chrome.runtime.onMessage.addListener((message) => {
+  console.log("[QuickLinks] runtime.onMessage", message);
   if (message.type === "QUICKLINKS_TOAST") {
     showToast(message.message, message.toastType || "info");
   }
