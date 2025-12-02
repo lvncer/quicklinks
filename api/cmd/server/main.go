@@ -63,6 +63,7 @@ func main() {
 		corsConfig.AllowOrigins = []string{
 			"http://localhost:3000",
 			"https://localhost:3000",
+			"https://quicklinks-zeta.vercel.app",
 		}
 	}
 

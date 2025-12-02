@@ -16,7 +16,10 @@
       "run_at": "document_idle"
     },
     {
-      "matches": ["http://localhost:3000/*"],
+      "matches": [
+        "http://localhost:3000/*",
+        "https://quicklinks-zeta.vercel.app/*"
+      ],
       "js": ["dist/web-auth-bridge.js"],
       "run_at": "document_idle"
     }
