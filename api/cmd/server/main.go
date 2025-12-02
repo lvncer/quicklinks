@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -60,10 +61,19 @@ func main() {
 	if cfg.Environment == "development" {
 		corsConfig.AllowAllOrigins = true
 	} else {
-		corsConfig.AllowOrigins = []string{
-			"http://localhost:3000",
-			"https://localhost:3000",
-			"https://quicklinks-zeta.vercel.app",
+		corsConfig.AllowBrowserExtensions = true
+		corsConfig.AllowOriginFunc = func(origin string) bool {
+			if origin == "http://localhost:3000" ||
+				origin == "https://localhost:3000" ||
+				origin == "https://quicklinks-zeta.vercel.app" {
+				return true
+			}
+
+			if strings.HasPrefix(origin, "chrome-extension://") {
+				return true
+			}
+
+			return false
 		}
 	}
 
