@@ -23,6 +23,7 @@ window.addEventListener("message", (event: MessageEvent) => {
 
   const token = data.token;
   const userId = data.userId as string | undefined;
+  const apiBaseUrl = data.apiBaseUrl as string | undefined;
 
   if (typeof token !== "string" || !token) {
     console.warn("[QuickLinks] Received auth message without valid token");
@@ -35,6 +36,7 @@ window.addEventListener("message", (event: MessageEvent) => {
         type: "QUICKLINKS_SAVE_AUTH",
         token,
         userId,
+        apiBaseUrl,
       },
       () => {
         const err = chrome.runtime.lastError;

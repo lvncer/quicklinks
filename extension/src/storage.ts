@@ -7,7 +7,7 @@ export interface QuickLinksConfig {
 }
 
 const DEFAULT_CONFIG: QuickLinksConfig = {
-  apiBaseUrl: "http://localhost:8080",
+  apiBaseUrl: "https://quicklinks-production-6429.up.railway.app",
   clerkFrontendApiUrl: "",
   clerkToken: "",
   clerkUserId: "",
@@ -43,5 +43,5 @@ export async function clearAuthData(): Promise<void> {
 
 export async function isClerkConfigured(): Promise<boolean> {
   const config = await getConfig();
-  return !!config.clerkFrontendApiUrl;
+  return !!config.clerkToken && !!config.apiBaseUrl;
 }

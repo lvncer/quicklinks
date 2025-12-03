@@ -17,16 +17,19 @@ export function ExtensionAuthSync() {
 
     const sync = async () => {
       try {
-        const token = await getToken();
+        const token = await getToken({ template: "quicklinks-extension" });
         if (!token || !userId || cancelled) {
           return;
         }
+
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE;
 
         const message = {
           source: "quicklinks-web",
           type: "QUICKLINKS_EXTENSION_AUTH" as const,
           token,
           userId,
+          apiBaseUrl,
         };
 
         const targetOrigin =

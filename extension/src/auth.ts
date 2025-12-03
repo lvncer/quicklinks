@@ -43,7 +43,11 @@ export async function getAuthState(): Promise<AuthState> {
   }
 
   if (config.clerkTokenExpiresAt && Date.now() > config.clerkTokenExpiresAt) {
-    console.log("[QuickLinks] getAuthState - Token expired, clearing auth");
+    console.log("[QuickLinks] getAuthState - Token expired, clearing auth", {
+      expiresAt: config.clerkTokenExpiresAt,
+      now: Date.now(),
+      diffMs: config.clerkTokenExpiresAt - Date.now(),
+    });
     await clearAuthData();
     return {
       isAuthenticated: false,
