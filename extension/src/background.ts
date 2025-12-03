@@ -186,6 +186,14 @@ async function handleSaveAuthMessage(message: {
     const exp = typeof expValue === "number" ? expValue : undefined;
     const expiresAt = exp ? exp * 1000 : Date.now() + 60 * 60 * 1000;
 
+    console.log("[QuickLinks] handleSaveAuthMessage - parsed token", {
+      userId,
+      payload,
+      exp,
+      expiresAt,
+      now: Date.now(),
+    });
+
     const updates: {
       clerkToken: string;
       clerkUserId: string;
@@ -200,10 +208,7 @@ async function handleSaveAuthMessage(message: {
     const apiBaseUrl = message.apiBaseUrl;
     if (typeof apiBaseUrl === "string") {
       const trimmed = apiBaseUrl.trim();
-      if (
-        trimmed.startsWith("http://") ||
-        trimmed.startsWith("https://")
-      ) {
+      if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
         updates.apiBaseUrl = trimmed.replace(/\/+$/, "");
       }
     }
