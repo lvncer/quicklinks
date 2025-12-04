@@ -9,6 +9,10 @@
 - 詳しいアーキテクチャは [`documents/architecture.md`](documents/architecture.md) を参照。
 - マイルストーン・実装順序は [`documents/milestones.md`](documents/milestones.md) を参照。
 
+## 拡張機能について
+
+- ブラウザ拡張のセットアップ方法は [`documents/SETUP_Extension.md`](documents/SETUP_Extension.md) を参照してください。
+
 ## ローカル開発
 
 詳しくは [`documents/LOCAL_SETUP.md`](documents/LOCAL_SETUP.md) を参照。
