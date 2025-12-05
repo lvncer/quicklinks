@@ -1,0 +1,21 @@
+# API エンドポイント一覧
+
+- `POST /api/links`
+  - 拡張からのリンク保存リクエストを受け取る。
+  - リクエストヘッダの `Authorization: Bearer <Clerk JWT>` を検証し、トークンが無効または不足している場合は `401 Unauthorized` を返す。
+  - JWT の `sub` から `user_id` を取得し、そのユーザーのリンクとして保存する。
+  - リクエストボディ（`url`, `title`, `note`, `page`, `user_identifier`）をバリデーション。
+  - `url` から簡易的に `domain` を抽出。
+  - OGP 情報（タイトル、Description、OG Image、公開日/更新日）を自動取得して DB に保存（M3 で実装済み、ただし表示時は `/api/og` でリアルタイム取得も可能）。
+  - `links` テーブルに 1 レコード挿入し、生成された `id` を返す。
+- `GET /api/links`
+  - Web アプリ向けのリンク一覧取得 API。
+  - Clerk の JWT トークンで認証し、認証済みユーザーのリンクのみ返却。
+  - クエリパラメータ（`limit`, `from`, `to`, `domain`, `tag` など）でフィルタリング可能。
+  - ソート順: `ORDER BY COALESCE(published_at, saved_at) DESC`（公開日を優先、なければ保存日で降順）。
+- `GET /api/og`
+  - OGP 情報（タイトル、Description、OG Image、公開日/更新日）を取得する API。
+  - クエリパラメータ `url` を受け取り、そのページのメタデータを返却。
+  - レスポンス: `{ title, description, image, date }`（`date` は `published_at` 相当の日付文字列、取得できない場合は `null`）。
+  - Clerk の JWT トークンで認証。
+  - `internal/service/metadata.go` の `FetchMetadata` 関数を使用してスクレイピング。

@@ -6,8 +6,15 @@
 
 ## ドキュメント
 
-- 詳しいアーキテクチャは [`documents/architecture.md`](documents/architecture.md) を参照。
-- マイルストーン・実装順序は [`documents/milestones.md`](documents/milestones.md) を参照。
+開発者向けのドキュメントは以下をご参照ください。
+
+| ドキュメント名   | パス                                                                   |
+| ---------------- | ---------------------------------------------------------------------- |
+| アーキテクチャ   | [documents/architecture.md](documents/architecture.md)                 |
+| マイルストーン   | [documents/milestones.md](documents/milestones.md)                     |
+| ディレクトリ構造 | [/documents/directory_structure.md](/documents/directory_structure.md) |
+| API ドキュメント | [documents/api.md](documents/api.md)                                   |
+| ER 図            | [documents/er-diagram.md](documents/er-diagram.md)                     |
 
 ## 拡張機能について
 
