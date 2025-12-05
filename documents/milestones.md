@@ -122,6 +122,22 @@
     - `storage.ts` の `DEFAULT_CONFIG.apiBaseUrl` を本番 API URL に寄せる（開発時のみオプションで上書き）
     - `options.ts` で API URL 入力時に `http(s)://` が無ければ自動補完するなど、軽いバリデーションを追加
 
+## M3.7: 開発基盤の強化（Docker, CI, 依存関係）
+
+- **目的**: Web をコンテナ対応し、全コンポーネントの CI を整備、依存関係更新を安全に自動化する。
+- **やること**
+  - Docker
+    - `web/` に Dockerfile を追加（API は既に対応済み、extension は毎回ビルドするため今回は対象外）
+    - 将来的な k8s 連携や一括ビルド用に、クリーン & ビルドをまとめるシェルスクリプトを別途用意
+  - GitHub Actions
+    - matrix で `web`, `extension`, `api` の lint / build / test を実行
+    - トリガー: `pull_request`（main 向け）、`push`（main）
+    - 依存インストールは `--frozen-lockfile` を必須
+    - ざっくりした依存チェック（`pnpm audit` / `npm audit` 相当）を追加
+  - Dependabot / 自動マージ
+    - セキュリティ更新・patch/minor の依存アップデートは自動マージ
+    - major 更新はレビュー必須
+
 ## M4: 検索・フィルタリング & タグ（使い勝手の向上）
 
 - **目的**: 溜まってきたリンクを「あとから探せる」状態にする。
@@ -134,6 +150,25 @@
   - タグ機能の基礎
     - 最初は `links.tags (text[])` のみでよい
     - （必要になったら `tags` / `link_tags` テーブルに分離）
+
+## M4.5: Web UI でリンクの更新・削除（published_at / memo）
+
+- **目的**: 保存済みリンクの公開日（`published_at`）やメモを Web から直接編集・削除できるようにする。
+- **やること**
+  - DB は既存の `published_at` / `note` を利用（変更履歴は `infra/migrations` を参照）
+  - API: `PATCH /api/links/:id` で `published_at` / `note` を更新、`DELETE /api/links/:id` はハードデリート（将来は監査用にソフトデリート検討）
+  - Web: リンク一覧（または詳細）で日付・メモの編集 UI を用意し、削除アクションも提供
+
+## M4.6: 拡張 UI で日付・メモ付き保存
+
+- **目的**: 拡張のポップアップから、日付（`published_at` 相当）とメモを付けてリンクを保存できるようにする。
+- **やること**
+  - 拡張のポップアップに保存フォームを追加
+    - URL: 現在タブを自動取得
+    - 日付: デフォルトは今日 or 空で入力可（`published_at` として送る）
+    - メモ: 任意入力（`note`）
+  - API 呼び出しは Web と共通の `POST /api/links` を利用し、Clerk JWT（Web から同期されたもの）で認証する
+  - 拡張側に独立したサインイン UI は持たず、Web ログイン済みで同期されたトークンのみを使う
 
 ## M5: ダイジェスト生成の土台（手動トリガ）
 
