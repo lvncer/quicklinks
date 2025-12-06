@@ -40,17 +40,32 @@ jobs:
       # JS/TS dependencies (Bun, frozen lockfile)
       - name: Install root JS deps
         if: matrix.service != 'api'
-        run: bun install --frozen-lockfile
+        run: |
+          if [ "$GITHUB_ACTOR" = "dependabot[bot]" ]; then
+            bun install
+          else
+            bun install --frozen-lockfile
+          fi
 
       - name: Install web deps
         if: matrix.service == 'web'
         working-directory: web
-        run: bun install --frozen-lockfile
+        run: |
+          if [ "$GITHUB_ACTOR" = "dependabot[bot]" ]; then
+            bun install
+          else
+            bun install --frozen-lockfile
+          fi
 
       - name: Install extension deps
         if: matrix.service == 'extension'
         working-directory: extension
-        run: bun install --frozen-lockfile
+        run: |
+          if [ "$GITHUB_ACTOR" = "dependabot[bot]" ]; then
+            bun install
+          else
+            bun install --frozen-lockfile
+          fi
 
       # Web: lint / build / audit
       - name: Lint web
