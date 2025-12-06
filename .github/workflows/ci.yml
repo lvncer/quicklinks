@@ -33,7 +33,7 @@ jobs:
 
       - name: Setup Go
         if: matrix.service == 'api'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: api/go.mod
 
