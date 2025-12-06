@@ -10,14 +10,15 @@
 
 開発者向けのドキュメントは以下をご参照ください。
 
-| ドキュメント名   | パス                                                                   |
-| ---------------- | ---------------------------------------------------------------------- |
-| アーキテクチャ   | [documents/architecture.md](documents/architecture.md)                 |
-| 技術スタック一覧 | [documents/tech-stacks.md](documents/tech-stacks.md)                   |
-| マイルストーン   | [documents/milestones.md](documents/milestones.md)                     |
-| ディレクトリ構造 | [/documents/directory_structure.md](/documents/directory_structure.md) |
-| API ドキュメント | [documents/api.md](documents/api.md)                                   |
-| ER 図            | [documents/er-diagram.md](documents/er-diagram.md)                     |
+| ドキュメント名     | パス                                                                   |
+| ------------------ | ---------------------------------------------------------------------- |
+| アーキテクチャ     | [documents/architecture.md](documents/architecture.md)                 |
+| 技術スタック一覧   | [documents/tech-stacks.md](documents/tech-stacks.md)                   |
+| マイルストーン     | [documents/milestones.md](documents/milestones.md)                     |
+| ディレクトリ構造   | [/documents/directory_structure.md](/documents/directory_structure.md) |
+| API ドキュメント   | [documents/api.md](documents/api.md)                                   |
+| ER 図              | [documents/er-diagram.md](documents/er-diagram.md)                     |
+| CI/CD ドキュメント | [documents/ci.md](documents/ci.md)                                     |
 
 ## 拡張機能について
 

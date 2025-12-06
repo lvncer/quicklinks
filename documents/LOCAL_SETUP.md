@@ -83,3 +83,61 @@ Ctrl+C を押すか、 `./dev-scripts/stop-all.sh`を実行してください。
    - 「パッケージ化されていない拡張機能を読み込む」で `extension` フォルダを選択
 
 詳細は [`extension/README.md`](extension/README.md) を参照。
+
+---
+
+## Docker 関連
+
+### API 用 Docker イメージ
+
+- 定義ファイル: `api/Dockerfile`
+- 概要:
+  - Go 公式イメージ + マルチステージビルド
+  - ビルドステージで `api/go.mod` / `api/go.sum` を使って依存解決
+  - `CGO_ENABLED=0`, `GOOS=linux`, `GOARCH=amd64` で静的バイナリ `server` をビルド
+  - ランタイムステージ（`alpine:3.20`）にバイナリだけコピーして軽量コンテナとして起動
+- 公開ポート: `8080`
+
+### Web 用 Docker イメージ
+
+- 定義ファイル: `web/Dockerfile`
+- 概要:
+  - `node:20-alpine` ベースのマルチステージ構成
+  - ビルドステージ:
+    - `web/package.json` をコピーして `npm install --omit=dev`
+    - `web/` 一式をコピーして `npm run build`
+  - ランタイムステージ:
+    - `/app` にビルド済み成果物と `node_modules` をコピー
+    - `npm run start` で Next.js を起動
+- 公開ポート: `3000`
+
+※ 本番向けのイメージビルド手順やレジストリ連携は、デプロイ先のインフラに合わせて別途整備する。
+
+---
+
+## 全コンポーネントのクリーン & ビルド
+
+開発環境または CI 相当のチェックとして、API / Web / Extension をまとめてビルドするスクリプトがあります。
+
+- スクリプト: `./dev-scripts/build-all.sh`
+- やっていること:
+  - API (`api/`):
+    - `go clean ./...`
+    - `go fmt ./...`
+    - `go test ./...`
+    - `go build ./cmd/server`
+  - Web (`web/`):
+    - Bun があれば: `bun install` → `bun run build`
+    - Bun が無ければ: `npm install` → `npm run build`
+  - Extension (`extension/`):
+    - Bun があれば: `bun install` → `bun run build`
+    - Bun が無ければ: `npm install` → `npm run build`
+
+### 使い方
+
+```bash
+chmod +x ./dev-scripts/build-all.sh  # 初回のみ
+./dev-scripts/build-all.sh
+```
+
+ビルドがすべて通れば、各コンポーネントの依存関係と基本的なビルドは問題ない状態とみなせます。
