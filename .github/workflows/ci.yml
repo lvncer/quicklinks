@@ -62,7 +62,7 @@ jobs:
       - name: Audit web dependencies
         if: matrix.service == 'web'
         working-directory: web
-        run: bun audit
+        run: bun audit --audit-level=high
 
       # Extension: build / audit (no dedicated lint script yet)
       - name: Build extension
@@ -73,7 +73,7 @@ jobs:
       - name: Audit extension dependencies
         if: matrix.service == 'extension'
         working-directory: extension
-        run: bun audit
+        run: bun audit --audit-level=high
 
       # API (Go): fmt / test / build
       - name: Go fmt
