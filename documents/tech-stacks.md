@@ -51,5 +51,5 @@
 | パッケージ管理        | bun                 | ルートで統一運用                                       |
 | フォーマッタ（JS/TS） | Biome               | `biome format --write`（web/extension を対象）         |
 | フォーマッタ（Go）    | gofmt               | CI 必須、`dev-scripts/format-go.sh` で手動実行         |
-| pre-commit            | Husky + lint-staged | コミット前に Biome を実行、Go への適用は合意後に有効化 |
+| pre-commit            | Husky + lint-staged | コミット前に Biome を実行し、ステージ済みの Go ファイルにも `gofmt -w` を適用 |
 | コード生成（予定）    | ent + `go generate` | ORM のコード生成（M3.8 以降）                          |

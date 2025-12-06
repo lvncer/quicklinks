@@ -128,7 +128,8 @@
 - **やること**
   - Docker
     - `web/` に Dockerfile を追加（API は既に対応済み、extension は毎回ビルドするため今回は対象外）
-    - 将来的な k8s 連携や一括ビルド用に、クリーン & ビルドをまとめるシェルスクリプトを別途用意
+    - API / Web / Extension のクリーン & ビルドをまとめる `dev-scripts/build-all.sh` を用意
+    - ローカル検証用に `docker-compose.yml` で `api` + `web` を同時起動できるようにする
   - GitHub Actions
     - matrix で `web`, `extension`, `api` の lint / build / test を実行
     - トリガー: `pull_request`（main 向け）、`push`（main）
@@ -138,7 +139,7 @@
     - ルート `package.json` を bun 管理にして、`@biomejs/biome`, `husky`, `lint-staged` を devDependencies に追加
     - `biome format --write` を `web/` と `extension/` の `*.{ts,tsx,js,jsx,json,md}` に適用
     - Husky `pre-commit` で `lint-staged` を実行（コミット前フォーマット）
-    - lint-staged で Go も対象にするか: **方針案**として `gofmt -w` をステージ済みの Go ファイルに走らせる。プロジェクトの合意を取った上で有効化する。
+    - lint-staged でステージ済みの Go ファイルにも `gofmt -w` を実行する。
   - Go フォーマット
     - CI で `go fmt ./...` を必須にする
     - 手動実行用に `dev-scripts/format-go.sh`（中身は `go fmt ./...`）を追加しておく

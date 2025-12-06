@@ -6,7 +6,10 @@
 quicklinks/
 ├── README.md
 ├── package.json                    # ルート共通ツール（bun 管理: Biome / Husky / lint-staged など）
+├── bun.lock                        # ルート bun 用ロックファイル
 ├── biome.json                      # Biome 設定（web / extension 配下を対象に format）
+├── docker-compose.yml              # API + Web を同時起動する docker compose 設定
+├── .dockerignore                   # Docker ビルド用の ignore 設定
 ├── turbo.json / nx.json            # （任意）モノレポツール設定
 ├── .gitignore
 │
@@ -145,14 +148,15 @@ quicklinks/
 │           └── supabaseClient.ts   # Supabase クライアント（read 用）
 │
 ├── dev-scripts/
-│   ├── run-api-local.sh
-│   ├── run-web-local.sh
+│   ├── run-all.sh                  # API + Web を同時に起動するスクリプト
+│   ├── stop-all.sh                 # API + Web をまとめて停止するスクリプト
+│   ├── test-api.sh                 # API の疎通テスト用スクリプト
 │   ├── format-go.sh                # go fmt ./... を手動実行するスクリプト
-│   └── sync-supabase-schema.sh
+│   └── build-all.sh                # API / Web / Extension のクリーン & ビルド用スクリプト
 │
 └── .github/
+    ├── dependabot.yml              # 依存アップデート設定
     └── workflows/
-        ├── ci.yml                  # lint / test / build
-        ├── deploy-api.yml          # API デプロイ（任意）
-        └── deploy-web.yml          # Web デプロイ（任意）
+        ├── ci.yml                  # matrix で web / extension / api の lint / build / test を実行
+        └── dependabot-automerge.yml # Dependabot PR の自動マージ用ワークフロー
 ```
