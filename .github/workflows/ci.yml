@@ -13,6 +13,10 @@ jobs:
     name: Build & test (${{ matrix.service }})
     runs-on: ubuntu-latest
 
+    env:
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+
     strategy:
       matrix:
         service: [web, extension, api]
