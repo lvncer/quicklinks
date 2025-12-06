@@ -10,7 +10,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
     "husky": "^9.0.0",
-    "lint-staged": "^15.0.0"
+    "lint-staged": "^16.2.7"
   },
   "lint-staged": {
     "web/**/*.{ts,tsx,js,jsx,json,md}": [
