@@ -10,19 +10,19 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/lvncer/quicklinks/api/internal/middleware"
 	"github.com/lvncer/quicklinks/api/internal/model"
+	"github.com/lvncer/quicklinks/api/internal/repository"
 	"github.com/lvncer/quicklinks/api/internal/service"
 )
 
 type LinksHandler struct {
-	DB *pgxpool.Pool
+	repo repository.LinkRepository
 }
 
-func NewLinksHandler(db *pgxpool.Pool) *LinksHandler {
-	return &LinksHandler{DB: db}
+func NewLinksHandler(repo repository.LinkRepository) *LinksHandler {
+	return &LinksHandler{repo: repo}
 }
 
 func (h *LinksHandler) Register(r *gin.Engine, authMiddleware gin.HandlerFunc) {
@@ -81,46 +81,25 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	var id string
-	query := `
-		insert into links (
-			user_id,
-			url,
-			title,
-			description,
-			domain,
-			og_image,
-			page_url,
-			note,
-			tags,
-			metadata,
-			published_at,
-			saved_at,
-			created_at
-		)
-		values ($1, $2, $3, $4, $5, $6, $7, $8, $9, '{}'::jsonb, $10, now(), now())
-		returning id
-	`
-
 	tags := req.Tags
 	if tags == nil {
 		tags = []string{}
 	}
 
-	err = h.DB.QueryRow(ctx, query,
-		userID, // Use authenticated user_id instead of request's user_identifier
-		req.URL,
-		req.Title,
-		description,
-		domain,
-		ogImage,
-		req.PageURL,
-		req.Note,
-		tags,
-		publishedAt,
-	).Scan(&id)
+	id, err := h.repo.CreateLink(ctx, repository.CreateLinkInput{
+		UserID:      userID,
+		URL:         req.URL,
+		Title:       req.Title,
+		Description: description,
+		Domain:      domain,
+		OGImage:     ogImage,
+		PageURL:     req.PageURL,
+		Note:        req.Note,
+		Tags:        tags,
+		PublishedAt: publishedAt,
+	})
 	if err != nil {
-		log.Printf("database error: %v", err)
+		log.Printf("repository error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to insert link", "detail": err.Error()})
 		return
 	}
@@ -146,43 +125,11 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	query := `
-		SELECT id, user_id, url, title, description, domain, og_image, page_url, note, saved_at, published_at
-		FROM links
-		WHERE user_id = $1
-		ORDER BY COALESCE(published_at, saved_at) DESC
-		LIMIT $2
-	`
-
-	rows, err := h.DB.Query(ctx, query, userID, limit)
+	links, err := h.repo.ListLinks(ctx, userID, limit)
 	if err != nil {
-		log.Printf("database error: %v", err)
+		log.Printf("repository error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch links"})
 		return
-	}
-	defer rows.Close()
-
-	links := []model.Link{}
-	for rows.Next() {
-		var link model.Link
-		err := rows.Scan(
-			&link.ID,
-			&link.UserID,
-			&link.URL,
-			&link.Title,
-			&link.Description,
-			&link.Domain,
-			&link.OGImage,
-			&link.PageURL,
-			&link.Note,
-			&link.SavedAt,
-			&link.PublishedAt,
-		)
-		if err != nil {
-			log.Printf("scan error: %v", err)
-			continue
-		}
-		links = append(links, link)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"links": links})

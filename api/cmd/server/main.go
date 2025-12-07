@@ -18,6 +18,7 @@ import (
 	"github.com/lvncer/quicklinks/api/internal/db"
 	"github.com/lvncer/quicklinks/api/internal/handler"
 	"github.com/lvncer/quicklinks/api/internal/middleware"
+	"github.com/lvncer/quicklinks/api/internal/repository"
 )
 
 func main() {
@@ -33,13 +34,20 @@ func main() {
 	// Initialize Clerk SDK
 	middleware.InitClerk(cfg.ClerkSecretKey)
 
-	// Create database connection pool
+	// Create database connection pool (pgx)
 	ctx := context.Background()
 	pool, err := db.NewPool(ctx, cfg.DatabaseURL)
 	if err != nil {
 		log.Fatalf("failed to create database pool: %v", err)
 	}
 	defer pool.Close()
+
+	// Create Ent client for ORM operations.
+	entClient, err := db.NewEntClient(cfg.DatabaseURL)
+	if err != nil {
+		log.Fatalf("failed to create ent client: %v", err)
+	}
+	defer entClient.Close()
 
 	// Set Gin mode based on environment
 	if cfg.Environment == "production" {
@@ -85,7 +93,8 @@ func main() {
 	})
 
 	// Register handlers with auth middleware
-	linksHandler := handler.NewLinksHandler(pool)
+	linkRepo := repository.NewLinkRepository(entClient)
+	linksHandler := handler.NewLinksHandler(linkRepo)
 	linksHandler.Register(r, middleware.ClerkAuth())
 
 	// Create HTTP server
