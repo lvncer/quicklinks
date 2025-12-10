@@ -40,11 +40,6 @@ func NewLinkRepository(client *appent.Client) LinkRepository {
 }
 
 func (r *entLinkRepository) CreateLink(ctx context.Context, input CreateLinkInput) (string, error) {
-	tags := input.Tags
-	if tags == nil {
-		tags = []string{}
-	}
-
 	linkEntity, err := r.client.Link.
 		Create().
 		SetUserID(input.UserID).
@@ -55,7 +50,6 @@ func (r *entLinkRepository) CreateLink(ctx context.Context, input CreateLinkInpu
 		SetOgImage(input.OGImage).
 		SetPageURL(input.PageURL).
 		SetNote(input.Note).
-		SetTags(tags).
 		SetNillablePublishedAt(input.PublishedAt).
 		Save(ctx)
 	if err != nil {
@@ -68,6 +62,20 @@ func (r *entLinkRepository) CreateLink(ctx context.Context, input CreateLinkInpu
 func (r *entLinkRepository) ListLinks(ctx context.Context, userID string, limit int) ([]model.Link, error) {
 	entities, err := r.client.Link.
 		Query().
+		Select(
+			link.FieldID,
+			link.FieldUserID,
+			link.FieldURL,
+			link.FieldTitle,
+			link.FieldDescription,
+			link.FieldDomain,
+			link.FieldOgImage,
+			link.FieldPageURL,
+			link.FieldNote,
+			link.FieldSavedAt,
+			link.FieldCreatedAt,
+			link.FieldPublishedAt,
+		).
 		Where(link.UserIDEQ(userID)).
 		Order(
 			link.ByPublishedAt(sql.OrderDesc()),
