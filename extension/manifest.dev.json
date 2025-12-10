@@ -4,7 +4,7 @@
   "version": "0.2.0",
   "description": "Save links with a long-press (mobile) or right-click (PC)",
   "permissions": ["contextMenus", "storage", "activeTab"],
-  "host_permissions": ["https://quicklinks-hftb.onrender.com/*"],
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "dist/background.js",
     "type": "module"
