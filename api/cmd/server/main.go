@@ -70,17 +70,17 @@ func main() {
 		corsConfig.AllowAllOrigins = true
 	} else {
 		corsConfig.AllowBrowserExtensions = true
+		allowed := map[string]struct{}{}
+		for _, o := range cfg.AllowedOrigins {
+			allowed[o] = struct{}{}
+		}
 		corsConfig.AllowOriginFunc = func(origin string) bool {
-			if origin == "http://localhost:3000" ||
-				origin == "https://localhost:3000" ||
-				origin == "https://quicklinks-zeta.vercel.app" {
+			if _, ok := allowed[origin]; ok {
 				return true
 			}
-
 			if strings.HasPrefix(origin, "chrome-extension://") {
 				return true
 			}
-
 			return false
 		}
 	}
