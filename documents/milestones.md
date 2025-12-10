@@ -188,8 +188,8 @@
     - `src/app/links/page.tsx` にフィルタ UI（期間 / ドメイン / タグ）を追加し、日付期間などは URL クエリで表現（共有・再現性を高める）
     - クエリフォーマット例: `?from=2025-11-01&to=2025-11-30&tag=dev`（ISO8601 日付）。複数タグにする場合は `tag=dev&tag=ai` などの複数指定を許容。
   - タグ機能の基礎
-    - 最初は `links.tags (text[])` のみでよい
-    - （必要になったら `tags` / `link_tags` テーブルに分離）
+    - 既存の `links.tags (text[])` を `jsonb` カラムに移行し、Ent 側では `field.JSON` を使った JSON フィールド（例: `[]string`）として管理するマイグレーションを追加する。
+    - 将来的に必要になったら `tags` / `link_tags` テーブルに正規化して分離する。
 
 ## M4.5: Web UI でリンクの更新・削除（published_at / memo）
 
