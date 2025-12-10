@@ -99,7 +99,7 @@
 - **目的**: 自分（＋ごく少人数）が実際の環境で触りながらフィードバックを回せる状態にする。
 - **やること**
   - API 側
-    - 既存の Go/Gin サーバーを Render / Fly.io / Railway などのマネージド環境に 1 インスタンスだけデプロイ
+    - 既存の Go/Gin サーバーを Render のマネージド環境に 1 インスタンスだけデプロイ
     - Supabase の `DATABASE_URL` を本番用環境変数として設定
     - `CLERK_SECRET_KEY` を環境変数で設定
   - Web 側
@@ -156,6 +156,26 @@
   - 既存の `infra/migrations/00x_*.sql` によって構築済みの本番 Supabase DB を baseline とみなし、現在の `links` スキーマと同等の初期マイグレーションを ent 側（`ent/migrate`）に定義する。
   - 今後のスキーマ変更（例: `links.deleted_at` の追加や Index 追加）は ent のマイグレーションを唯一のソースオブトゥルースとして管理し、`infra/migrations` は参照用として残しつつ段階的に廃止する。
   - CI に ent のコード生成確認（`go generate ./...` 相当）と `go fmt ./...` を追加し、本番 Supabase に対するマイグレーション適用は専用コマンドで手動実行する運用を整える（自動 migrate は行わない）。
+
+## M3.8.5: API 本番ホスティングの Render 移行 ✅
+
+- **目的**: Railway トライアル終了に伴い、Go API を安定して動かせる本番ホスティング基盤に移行する。
+- **ステータス**: 実装完了
+- **やったこと**
+  - API 側
+    - Railway 上で動かしていた Go/Gin サーバーを Render の Web Service（Docker）に移行。
+    - 既存の `api/Dockerfile` を Render 用にそのまま利用しつつ、コメントなどを Render ベースの記述に更新。
+    - `ENVIRONMENT`, `DATABASE_URL`, `CLERK_SECRET_KEY`, `ALLOWED_ORIGINS` を Render の環境変数として設定。
+    - CORS 設定を `ALLOWED_ORIGINS` 環境変数経由で制御するように変更し、本番ではホワイトリスト方式（開発環境では `AllowAllOrigins`）に統一。
+  - Web 側
+    - Vercel から Render 上の API に向けて通信するように `API_BASE_URL` / `NEXT_PUBLIC_API_BASE` などの環境変数を整理。
+    - プライバシーポリシー（`web/src/app/privacy/page.tsx`）、アーキテクチャ（`documents/architecture.md`）、技術スタック（`documents/tech-stacks.md`）を Render ベースの構成に更新。
+  - 拡張機能 側
+    - `extension/src/storage.ts` の `DEFAULT_CONFIG.apiBaseUrl` を Render 本番 URL に更新し、新規インストール時のデフォルト接続先を Render に変更。
+    - 既存の Options 画面からの API URL 設定フローは維持しつつ、Render 前提の運用に寄せた。
+- **メモ**
+  - 将来的にカスタムドメインやステージング環境を追加する場合も、`ALLOWED_ORIGINS` にドメインを追記するだけで CORS 設定を拡張できるようにしてある。
+  - Railway での構成やデプロイ手順は、過去の履歴として `documents/deploy_m35_railway_vercel.md` に残している。
 
 ## M3.9: ルートページを紹介 LP 化し、アプリ領域を分離
 

@@ -14,24 +14,26 @@
 
 ## Web アプリ（Next.js）
 
-| 項目           | 技術                                      | 用途 / 補足                                        |
-| -------------- | ----------------------------------------- | -------------------------------------------------- |
-| フレームワーク | Next.js 16 (App Router) + React 19        | Web ダッシュボード                                 |
-| 認証           | @clerk/nextjs                             | セッション取得・トークン同期（拡張へ postMessage） |
-| データ取得     | SWR                                       | `/api/links`, `/api/og` のクライアントフェッチ     |
-| スタイリング   | グローバル CSS, Tailwind ベース（最低限） |                                                    |
-| ビルド/実行    | next build / next start                   |                                                    |
-| パッケージ管理 | bun                                       |                                                    |
+| 項目           | 技術                               | 用途 / 補足                                        |
+| -------------- | ---------------------------------- | -------------------------------------------------- |
+| フレームワーク | Next.js 16 (App Router) + React 19 | Web ダッシュボード                                 |
+| ホスティング   | Vercel                             |                                                    |
+| 認証           | @clerk/nextjs                      | セッション取得・トークン同期（拡張へ postMessage） |
+| データ取得     | SWR                                | `/api/links`, `/api/og` のクライアントフェッチ     |
+| スタイリング   | Tailwind CSS                       |                                                    |
+| ビルド/実行    | next build / next start            |                                                    |
+| パッケージ管理 | bun                                |                                                    |
 
 ## API サーバー（Go + Gin）
 
 | 項目            | 技術                                           | 用途 / 補足                                                           |
 | --------------- | ---------------------------------------------- | --------------------------------------------------------------------- |
 | ランタイム / FW | Go + Gin                                       | REST API (`/api/links`, `/api/og`)                                    |
+| ホスティング    | Render                                         |                                                                       |
 | DB クライアント | pgx (postgres)                                 | Supabase/Postgres へ接続                                              |
 | 認証            | clerk-sdk-go + JWT middleware                  | `Authorization: Bearer <JWT>` を検証し `user_id` をコンテキストに設定 |
 | OGP 取得        | 独自サービス（`internal/service/metadata.go`） | `/api/og` で利用                                                      |
-| ORM（導入予定） | ent                                            | M3.8 で導入し、スキーマ定義とコード生成を一元化予定                   |
+| ORM             | ent                                            | スキーマ定義とコード生成を一元化                                      |
 | 設定            | `internal/config`                              | 環境変数読み込み (`DATABASE_URL`, `CLERK_SECRET_KEY`, etc.)           |
 
 ## データベース / インフラ
@@ -46,10 +48,10 @@
 
 ## 開発ツール / フォーマット
 
-| 項目                  | 技術                | 用途 / 補足                                            |
-| --------------------- | ------------------- | ------------------------------------------------------ |
-| パッケージ管理        | bun                 | ルートで統一運用                                       |
-| フォーマッタ（JS/TS） | Biome               | `biome format --write`（web/extension を対象）         |
-| フォーマッタ（Go）    | gofmt               | CI 必須、`dev-scripts/format-go.sh` で手動実行         |
+| 項目                  | 技術                | 用途 / 補足                                                                   |
+| --------------------- | ------------------- | ----------------------------------------------------------------------------- |
+| パッケージ管理        | bun                 | ルートで統一運用                                                              |
+| フォーマッタ（JS/TS） | Biome               | `biome format --write`（web/extension を対象）                                |
+| フォーマッタ（Go）    | gofmt               | CI 必須、`dev-scripts/format-go.sh` で手動実行                                |
 | pre-commit            | Husky + lint-staged | コミット前に Biome を実行し、ステージ済みの Go ファイルにも `gofmt -w` を適用 |
-| コード生成（予定）    | ent + `go generate` | ORM のコード生成（M3.8 以降）                          |
+| コード生成            | ent + `go generate` | ORM のコード生成                                                              |

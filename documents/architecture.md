@@ -230,8 +230,8 @@ sequenceDiagram
 
   - **本番構成（イメージ）**
   - DB: Supabase（Postgres）。
-  - API サーバー: コンテナ（Fly.io / Render / Railway など）もしくは Vercel Serverless Functions（要調整）。
-  - Web アプリ: Vercel などに Next.js をデプロイ。
+  - API サーバー: コンテナ（Render）
+  - Web アプリ: Vercel に Next.js をデプロイ。
   - 拡張: Chrome Web Store などで配布（Clerk ログイン必須のクローズド運用）。
 
 ## 今後の拡張の方向性（メモ）

@@ -25,7 +25,7 @@ WORKDIR /app
 # ビルド済みバイナリをコピー
 COPY --from=builder /app/server /app/server
 
-# アプリが待ち受けるポート（Railway が PORT を注入する）
+# アプリが待ち受けるポート（Render が PORT を注入する）
 EXPOSE 8080
 
 # サーバー起動

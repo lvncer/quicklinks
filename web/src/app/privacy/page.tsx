@@ -84,7 +84,7 @@ export default function PrivacyPage() {
         <ul className="list-disc space-y-1 pl-5">
           <li>認証: Clerk（ユーザーのログインおよびユーザー識別のため）</li>
           <li>
-            ホスティング / API / データベース: Vercel, Railway, Supabase /
+            ホスティング / API / データベース: Vercel, Render, Supabase /
             Postgres
           </li>
         </ul>
