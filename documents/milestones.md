@@ -177,25 +177,14 @@
   - 将来的にカスタムドメインやステージング環境を追加する場合も、`ALLOWED_ORIGINS` にドメインを追記するだけで CORS 設定を拡張できるようにしてある。
   - Railway での構成やデプロイ手順は、過去の履歴として `documents/deploy_m35_railway_vercel.md` に残している。
 
-## M3.9: ルートページを紹介 LP 化し、アプリ領域を分離
+## M3.9: ルートページを紹介 LP 化
 
-- **目的**: ルートを「価値が一目で伝わる紹介ページ」にしつつ、リンク一覧などのアプリ領域を分離して情報設計と導線を整理する。
+- **目的**: ルートを「価値が一目で伝わる紹介ページ」にする。
 - **やること**
   - **構成策定**: ヒーロー（価値訴求＋主要 CTA）、機能一覧、使い方（拡張インストール → Web で認証 → リンク保存 → Web で閲覧）、実際に使っている様子（スクショ/動画）、フッター（CTA/問い合わせ）というシンプル構成でワイヤーを切る。
   - **トーン & UI 指針**: シンプルで余白のあるレイアウト＋強めのタイポとアクセントカラー。ヒーローは短いタグライン＋「リンク保存が秒で終わる」ビジュアル（ブラウザ拡張のモック）を置く。
-  - **ルーティング/ドメイン案の整理**
-    - **採用**: サブドメイン分離で進める。LP: `quicklinks-zeta.vercel.app` / アプリ: `app.quicklinks-zeta.vercel.app`。
-      - DNS: `app.quicklinks-zeta.vercel.app` を `cname.vercel-dns.com` へ CNAME。Vercel 側でドメイン割り当て。
-      - 環境変数: `NEXT_PUBLIC_SITE_ORIGIN`（LP）, `NEXT_PUBLIC_APP_ORIGIN`, `NEXT_PUBLIC_API_BASE`, API 側の `ALLOWED_ORIGINS` に両ドメインを登録。
-      - Clerk: Allowed Origins/Redirect に両ドメイン追加。OAuth callback も両方登録。
-      - ルーティング: LP は `src/app/page.tsx`、アプリは `src/app/links/page.tsx` などを `app.` サブドメインで出す。カノニカル URL をオリジンに合わせる。
-    - パス分離案: `quicklinks-zeta.vercel.app`（LP） / `quicklinks-zeta.vercel.app/links`（アプリ）…サブドメイン採用のため今回は検討のみ。
-    - SEO/Cookie/SameSite などの考慮は上記設定に含める。
-  - **リンク共有 URL 設計（確定）**: `/u/<username>/links` でパス式に統一（人間可読・SEO 重視）。旧クエリ形は 301 リダイレクトで寄せる。
-  - **実装タスク**: `web/` 側で LP 用ページ（例: `src/app/page.tsx` を LP に、既存一覧は `src/app/links/page.tsx` などへ）を作成し、ヒーロー/機能/使い方/デモ/CTA セクションを組む。モック用スクショ or 簡易動画を用意。
+  - **実装タスク**: `web/` 側で LP 用ページ（例: `src/app/about/page.tsx` を LP に、既存一覧は `src/app/page.tsx` などへ）を作成し、ヒーロー/機能/使い方/デモ/CTA セクションを組む。モック用スクショ or 簡易動画を用意。
   - **導線と計測**: LP の CTA からサインアップ/拡張インストール導線を配置。Clerk 認証や app 領域への遷移でデザインを崩さないよう共通ヘッダー/フッターを検討。主要 CTA にトラッキング（GA/Sentry 等）を付ける。
-  - **将来検討（コミュニティ）**: `quicklinks-zeta.vercel.app/community` で全体公開リンクの最近分を見せる案は後続マイルストーンで追加検討（M3.9 範囲外）。
-  - **デプロイ構成**: 同リポジトリ内で Next.js を 2 プロジェクトに分割して Vercel に 2 つ登録（LP: `/web`, アプリ: `/app`）。オリジン分離で CORS/Cookie/SameSite を明確化し、LP の SEO/マーケをルートドメインに集中させる。
 
 ## M4: 検索・フィルタリング & タグ（使い勝手の向上）
 
@@ -274,3 +263,19 @@
   - デプロイパイプラインの自動化・強化
     - API / Web の CI / CD（既存の手動デプロイを自動化）
     - Supabase マイグレーションの適用フローを整備
+
+## M7.5: アプリ領域を分離
+
+- 目的: リンク一覧などのアプリ領域を分離して情報設計と導線を整理する。
+- やること
+  - **ルーティング/ドメイン案の整理**
+    - **採用**: サブドメイン分離で進める。LP: `quicklinks-zeta.vercel.app` / アプリ: `app.quicklinks-zeta.vercel.app`。
+      - DNS: `app.quicklinks-zeta.vercel.app` を `cname.vercel-dns.com` へ CNAME。Vercel 側でドメイン割り当て。
+      - 環境変数: `NEXT_PUBLIC_SITE_ORIGIN`（LP）, `NEXT_PUBLIC_APP_ORIGIN`, `NEXT_PUBLIC_API_BASE`, API 側の `ALLOWED_ORIGINS` に両ドメインを登録。
+      - Clerk: Allowed Origins/Redirect に両ドメイン追加。OAuth callback も両方登録。
+      - ルーティング: LP は `src/app/page.tsx`、アプリは `src/app/links/page.tsx` などを `app.` サブドメインで出す。カノニカル URL をオリジンに合わせる。
+    - パス分離案: `quicklinks-zeta.vercel.app`（LP） / `quicklinks-zeta.vercel.app/links`（アプリ）…サブドメイン採用のため今回は検討のみ。
+    - SEO/Cookie/SameSite などの考慮は上記設定に含める。
+  - **リンク共有 URL 設計（確定）**: `/u/<username>/links` でパス式に統一（人間可読・SEO 重視）。旧クエリ形は 301 リダイレクトで寄せる。
+  - **将来検討（コミュニティ）**: `quicklinks-zeta.vercel.app/community` で全体公開リンクの最近分を見せる案は後続マイルストーンで追加検討（M3.9 範囲外）。
+  - **デプロイ構成**: 同リポジトリ内で Next.js を 2 プロジェクトに分割して Vercel に 2 つ登録（LP: `/web`, アプリ: `/app`）。オリジン分離で CORS/Cookie/SameSite を明確化し、LP の SEO/マーケをルートドメインに集中させる。
