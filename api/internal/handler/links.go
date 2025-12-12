@@ -128,8 +128,23 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 		to   *time.Time // exclusive
 	)
 
+	// Timezone for interpreting YYYY-MM-DD boundaries.
+	// If omitted, defaults to UTC (backward-compatible).
+	loc := time.UTC
+	if tz := strings.TrimSpace(c.Query("tz")); tz != "" {
+		l, err := time.LoadLocation(tz)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":  "invalid tz",
+				"detail": "tz must be an IANA time zone (e.g. Asia/Tokyo)",
+			})
+			return
+		}
+		loc = l
+	}
+
 	if fromStr := c.Query("from"); fromStr != "" {
-		t, err := time.Parse("2006-01-02", fromStr)
+		t, err := time.ParseInLocation("2006-01-02", fromStr, loc)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error":  "invalid from",
@@ -141,7 +156,7 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 	}
 
 	if toStr := c.Query("to"); toStr != "" {
-		t, err := time.Parse("2006-01-02", toStr)
+		t, err := time.ParseInLocation("2006-01-02", toStr, loc)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error":  "invalid to",

@@ -105,9 +105,9 @@ func (r *entLinkRepository) ListLinks(ctx context.Context, userID string, filter
 					from := *filter.From
 					s.Where(sql.P(func(b *sql.Builder) {
 						b.WriteString("COALESCE(")
-						b.Ident(s.C(link.FieldPublishedAt))
+						b.WriteString(s.C(link.FieldPublishedAt))
 						b.WriteString(", ")
-						b.Ident(s.C(link.FieldSavedAt))
+						b.WriteString(s.C(link.FieldSavedAt))
 						b.WriteString(") >= ")
 						b.Arg(from)
 					}))
@@ -116,9 +116,9 @@ func (r *entLinkRepository) ListLinks(ctx context.Context, userID string, filter
 					to := *filter.To
 					s.Where(sql.P(func(b *sql.Builder) {
 						b.WriteString("COALESCE(")
-						b.Ident(s.C(link.FieldPublishedAt))
+						b.WriteString(s.C(link.FieldPublishedAt))
 						b.WriteString(", ")
-						b.Ident(s.C(link.FieldSavedAt))
+						b.WriteString(s.C(link.FieldSavedAt))
 						b.WriteString(") < ")
 						b.Arg(to)
 					}))
@@ -138,7 +138,7 @@ func (r *entLinkRepository) ListLinks(ctx context.Context, userID string, filter
 					}
 					jsonArr := string(b)
 					preds = append(preds, sql.P(func(b *sql.Builder) {
-						b.Ident(col)
+						b.WriteString(col)
 						b.WriteString(" @> ")
 						b.Arg(jsonArr)
 						b.WriteString("::jsonb")

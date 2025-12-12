@@ -35,6 +35,13 @@ export default function LinkList({
     if (tags && tags.length > 0) {
       for (const t of tags) params.append("tag", t);
     }
+    // Send client timezone so the API can interpret YYYY-MM-DD correctly.
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz) params.set("tz", tz);
+    } catch {
+      // noop
+    }
     return `${apiBaseUrl}/api/links?${params.toString()}`;
   })();
 
