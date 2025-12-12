@@ -22,191 +22,191 @@ type LinkCreate struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (lc *LinkCreate) SetUserID(s string) *LinkCreate {
-	lc.mutation.SetUserID(s)
-	return lc
+func (_c *LinkCreate) SetUserID(v string) *LinkCreate {
+	_c.mutation.SetUserID(v)
+	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableUserID(s *string) *LinkCreate {
-	if s != nil {
-		lc.SetUserID(*s)
+func (_c *LinkCreate) SetNillableUserID(v *string) *LinkCreate {
+	if v != nil {
+		_c.SetUserID(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetURL sets the "url" field.
-func (lc *LinkCreate) SetURL(s string) *LinkCreate {
-	lc.mutation.SetURL(s)
-	return lc
+func (_c *LinkCreate) SetURL(v string) *LinkCreate {
+	_c.mutation.SetURL(v)
+	return _c
 }
 
 // SetTitle sets the "title" field.
-func (lc *LinkCreate) SetTitle(s string) *LinkCreate {
-	lc.mutation.SetTitle(s)
-	return lc
+func (_c *LinkCreate) SetTitle(v string) *LinkCreate {
+	_c.mutation.SetTitle(v)
+	return _c
 }
 
 // SetNillableTitle sets the "title" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableTitle(s *string) *LinkCreate {
-	if s != nil {
-		lc.SetTitle(*s)
+func (_c *LinkCreate) SetNillableTitle(v *string) *LinkCreate {
+	if v != nil {
+		_c.SetTitle(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetDescription sets the "description" field.
-func (lc *LinkCreate) SetDescription(s string) *LinkCreate {
-	lc.mutation.SetDescription(s)
-	return lc
+func (_c *LinkCreate) SetDescription(v string) *LinkCreate {
+	_c.mutation.SetDescription(v)
+	return _c
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableDescription(s *string) *LinkCreate {
-	if s != nil {
-		lc.SetDescription(*s)
+func (_c *LinkCreate) SetNillableDescription(v *string) *LinkCreate {
+	if v != nil {
+		_c.SetDescription(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetDomain sets the "domain" field.
-func (lc *LinkCreate) SetDomain(s string) *LinkCreate {
-	lc.mutation.SetDomain(s)
-	return lc
+func (_c *LinkCreate) SetDomain(v string) *LinkCreate {
+	_c.mutation.SetDomain(v)
+	return _c
 }
 
 // SetNillableDomain sets the "domain" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableDomain(s *string) *LinkCreate {
-	if s != nil {
-		lc.SetDomain(*s)
+func (_c *LinkCreate) SetNillableDomain(v *string) *LinkCreate {
+	if v != nil {
+		_c.SetDomain(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetOgImage sets the "og_image" field.
-func (lc *LinkCreate) SetOgImage(s string) *LinkCreate {
-	lc.mutation.SetOgImage(s)
-	return lc
+func (_c *LinkCreate) SetOgImage(v string) *LinkCreate {
+	_c.mutation.SetOgImage(v)
+	return _c
 }
 
 // SetNillableOgImage sets the "og_image" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableOgImage(s *string) *LinkCreate {
-	if s != nil {
-		lc.SetOgImage(*s)
+func (_c *LinkCreate) SetNillableOgImage(v *string) *LinkCreate {
+	if v != nil {
+		_c.SetOgImage(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetPageURL sets the "page_url" field.
-func (lc *LinkCreate) SetPageURL(s string) *LinkCreate {
-	lc.mutation.SetPageURL(s)
-	return lc
+func (_c *LinkCreate) SetPageURL(v string) *LinkCreate {
+	_c.mutation.SetPageURL(v)
+	return _c
 }
 
 // SetNillablePageURL sets the "page_url" field if the given value is not nil.
-func (lc *LinkCreate) SetNillablePageURL(s *string) *LinkCreate {
-	if s != nil {
-		lc.SetPageURL(*s)
+func (_c *LinkCreate) SetNillablePageURL(v *string) *LinkCreate {
+	if v != nil {
+		_c.SetPageURL(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetNote sets the "note" field.
-func (lc *LinkCreate) SetNote(s string) *LinkCreate {
-	lc.mutation.SetNote(s)
-	return lc
+func (_c *LinkCreate) SetNote(v string) *LinkCreate {
+	_c.mutation.SetNote(v)
+	return _c
 }
 
 // SetNillableNote sets the "note" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableNote(s *string) *LinkCreate {
-	if s != nil {
-		lc.SetNote(*s)
+func (_c *LinkCreate) SetNillableNote(v *string) *LinkCreate {
+	if v != nil {
+		_c.SetNote(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetTags sets the "tags" field.
-func (lc *LinkCreate) SetTags(s []string) *LinkCreate {
-	lc.mutation.SetTags(s)
-	return lc
+func (_c *LinkCreate) SetTags(v []string) *LinkCreate {
+	_c.mutation.SetTags(v)
+	return _c
 }
 
 // SetMetadata sets the "metadata" field.
-func (lc *LinkCreate) SetMetadata(m map[string]interface{}) *LinkCreate {
-	lc.mutation.SetMetadata(m)
-	return lc
+func (_c *LinkCreate) SetMetadata(v map[string]interface{}) *LinkCreate {
+	_c.mutation.SetMetadata(v)
+	return _c
 }
 
 // SetSavedAt sets the "saved_at" field.
-func (lc *LinkCreate) SetSavedAt(t time.Time) *LinkCreate {
-	lc.mutation.SetSavedAt(t)
-	return lc
+func (_c *LinkCreate) SetSavedAt(v time.Time) *LinkCreate {
+	_c.mutation.SetSavedAt(v)
+	return _c
 }
 
 // SetNillableSavedAt sets the "saved_at" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableSavedAt(t *time.Time) *LinkCreate {
-	if t != nil {
-		lc.SetSavedAt(*t)
+func (_c *LinkCreate) SetNillableSavedAt(v *time.Time) *LinkCreate {
+	if v != nil {
+		_c.SetSavedAt(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (lc *LinkCreate) SetCreatedAt(t time.Time) *LinkCreate {
-	lc.mutation.SetCreatedAt(t)
-	return lc
+func (_c *LinkCreate) SetCreatedAt(v time.Time) *LinkCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableCreatedAt(t *time.Time) *LinkCreate {
-	if t != nil {
-		lc.SetCreatedAt(*t)
+func (_c *LinkCreate) SetNillableCreatedAt(v *time.Time) *LinkCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetPublishedAt sets the "published_at" field.
-func (lc *LinkCreate) SetPublishedAt(t time.Time) *LinkCreate {
-	lc.mutation.SetPublishedAt(t)
-	return lc
+func (_c *LinkCreate) SetPublishedAt(v time.Time) *LinkCreate {
+	_c.mutation.SetPublishedAt(v)
+	return _c
 }
 
 // SetNillablePublishedAt sets the "published_at" field if the given value is not nil.
-func (lc *LinkCreate) SetNillablePublishedAt(t *time.Time) *LinkCreate {
-	if t != nil {
-		lc.SetPublishedAt(*t)
+func (_c *LinkCreate) SetNillablePublishedAt(v *time.Time) *LinkCreate {
+	if v != nil {
+		_c.SetPublishedAt(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (lc *LinkCreate) SetID(u uuid.UUID) *LinkCreate {
-	lc.mutation.SetID(u)
-	return lc
+func (_c *LinkCreate) SetID(v uuid.UUID) *LinkCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableID(u *uuid.UUID) *LinkCreate {
-	if u != nil {
-		lc.SetID(*u)
+func (_c *LinkCreate) SetNillableID(v *uuid.UUID) *LinkCreate {
+	if v != nil {
+		_c.SetID(*v)
 	}
-	return lc
+	return _c
 }
 
 // Mutation returns the LinkMutation object of the builder.
-func (lc *LinkCreate) Mutation() *LinkMutation {
-	return lc.mutation
+func (_c *LinkCreate) Mutation() *LinkMutation {
+	return _c.mutation
 }
 
 // Save creates the Link in the database.
-func (lc *LinkCreate) Save(ctx context.Context) (*Link, error) {
-	lc.defaults()
-	return withHooks(ctx, lc.sqlSave, lc.mutation, lc.hooks)
+func (_c *LinkCreate) Save(ctx context.Context) (*Link, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (lc *LinkCreate) SaveX(ctx context.Context) *Link {
-	v, err := lc.Save(ctx)
+func (_c *LinkCreate) SaveX(ctx context.Context) *Link {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -214,66 +214,57 @@ func (lc *LinkCreate) SaveX(ctx context.Context) *Link {
 }
 
 // Exec executes the query.
-func (lc *LinkCreate) Exec(ctx context.Context) error {
-	_, err := lc.Save(ctx)
+func (_c *LinkCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (lc *LinkCreate) ExecX(ctx context.Context) {
-	if err := lc.Exec(ctx); err != nil {
+func (_c *LinkCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (lc *LinkCreate) defaults() {
-	if _, ok := lc.mutation.Metadata(); !ok {
+func (_c *LinkCreate) defaults() {
+	if _, ok := _c.mutation.Metadata(); !ok {
 		v := link.DefaultMetadata
-		lc.mutation.SetMetadata(v)
+		_c.mutation.SetMetadata(v)
 	}
-	if _, ok := lc.mutation.SavedAt(); !ok {
+	if _, ok := _c.mutation.SavedAt(); !ok {
 		v := link.DefaultSavedAt()
-		lc.mutation.SetSavedAt(v)
+		_c.mutation.SetSavedAt(v)
 	}
-	if _, ok := lc.mutation.CreatedAt(); !ok {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := link.DefaultCreatedAt()
-		lc.mutation.SetCreatedAt(v)
+		_c.mutation.SetCreatedAt(v)
 	}
-	if _, ok := lc.mutation.ID(); !ok {
+	if _, ok := _c.mutation.ID(); !ok {
 		v := link.DefaultID()
-		lc.mutation.SetID(v)
+		_c.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (lc *LinkCreate) check() error {
-	if _, ok := lc.mutation.URL(); !ok {
+func (_c *LinkCreate) check() error {
+	if _, ok := _c.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "Link.url"`)}
 	}
-	if v, ok := lc.mutation.URL(); ok {
+	if v, ok := _c.mutation.URL(); ok {
 		if err := link.URLValidator(v); err != nil {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Link.url": %w`, err)}
 		}
 	}
-	if _, ok := lc.mutation.Metadata(); !ok {
-		return &ValidationError{Name: "metadata", err: errors.New(`ent: missing required field "Link.metadata"`)}
-	}
-	if _, ok := lc.mutation.SavedAt(); !ok {
-		return &ValidationError{Name: "saved_at", err: errors.New(`ent: missing required field "Link.saved_at"`)}
-	}
-	if _, ok := lc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Link.created_at"`)}
-	}
 	return nil
 }
 
-func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
-	if err := lc.check(); err != nil {
+func (_c *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := lc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, lc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -286,69 +277,69 @@ func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
 			return nil, err
 		}
 	}
-	lc.mutation.id = &_node.ID
-	lc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
+func (_c *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Link{config: lc.config}
+		_node = &Link{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(link.Table, sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID))
 	)
-	if id, ok := lc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := lc.mutation.UserID(); ok {
+	if value, ok := _c.mutation.UserID(); ok {
 		_spec.SetField(link.FieldUserID, field.TypeString, value)
 		_node.UserID = &value
 	}
-	if value, ok := lc.mutation.URL(); ok {
+	if value, ok := _c.mutation.URL(); ok {
 		_spec.SetField(link.FieldURL, field.TypeString, value)
 		_node.URL = value
 	}
-	if value, ok := lc.mutation.Title(); ok {
+	if value, ok := _c.mutation.Title(); ok {
 		_spec.SetField(link.FieldTitle, field.TypeString, value)
 		_node.Title = &value
 	}
-	if value, ok := lc.mutation.Description(); ok {
+	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(link.FieldDescription, field.TypeString, value)
 		_node.Description = &value
 	}
-	if value, ok := lc.mutation.Domain(); ok {
+	if value, ok := _c.mutation.Domain(); ok {
 		_spec.SetField(link.FieldDomain, field.TypeString, value)
 		_node.Domain = &value
 	}
-	if value, ok := lc.mutation.OgImage(); ok {
+	if value, ok := _c.mutation.OgImage(); ok {
 		_spec.SetField(link.FieldOgImage, field.TypeString, value)
 		_node.OgImage = &value
 	}
-	if value, ok := lc.mutation.PageURL(); ok {
+	if value, ok := _c.mutation.PageURL(); ok {
 		_spec.SetField(link.FieldPageURL, field.TypeString, value)
 		_node.PageURL = &value
 	}
-	if value, ok := lc.mutation.Note(); ok {
+	if value, ok := _c.mutation.Note(); ok {
 		_spec.SetField(link.FieldNote, field.TypeString, value)
 		_node.Note = &value
 	}
-	if value, ok := lc.mutation.Tags(); ok {
+	if value, ok := _c.mutation.Tags(); ok {
 		_spec.SetField(link.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
 	}
-	if value, ok := lc.mutation.Metadata(); ok {
+	if value, ok := _c.mutation.Metadata(); ok {
 		_spec.SetField(link.FieldMetadata, field.TypeJSON, value)
 		_node.Metadata = value
 	}
-	if value, ok := lc.mutation.SavedAt(); ok {
+	if value, ok := _c.mutation.SavedAt(); ok {
 		_spec.SetField(link.FieldSavedAt, field.TypeTime, value)
 		_node.SavedAt = value
 	}
-	if value, ok := lc.mutation.CreatedAt(); ok {
+	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(link.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := lc.mutation.PublishedAt(); ok {
+	if value, ok := _c.mutation.PublishedAt(); ok {
 		_spec.SetField(link.FieldPublishedAt, field.TypeTime, value)
 		_node.PublishedAt = &value
 	}
@@ -363,16 +354,16 @@ type LinkCreateBulk struct {
 }
 
 // Save creates the Link entities in the database.
-func (lcb *LinkCreateBulk) Save(ctx context.Context) ([]*Link, error) {
-	if lcb.err != nil {
-		return nil, lcb.err
+func (_c *LinkCreateBulk) Save(ctx context.Context) ([]*Link, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(lcb.builders))
-	nodes := make([]*Link, len(lcb.builders))
-	mutators := make([]Mutator, len(lcb.builders))
-	for i := range lcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Link, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := lcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*LinkMutation)
@@ -386,11 +377,11 @@ func (lcb *LinkCreateBulk) Save(ctx context.Context) ([]*Link, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, lcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, lcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -410,7 +401,7 @@ func (lcb *LinkCreateBulk) Save(ctx context.Context) ([]*Link, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, lcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -418,8 +409,8 @@ func (lcb *LinkCreateBulk) Save(ctx context.Context) ([]*Link, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (lcb *LinkCreateBulk) SaveX(ctx context.Context) []*Link {
-	v, err := lcb.Save(ctx)
+func (_c *LinkCreateBulk) SaveX(ctx context.Context) []*Link {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -427,14 +418,14 @@ func (lcb *LinkCreateBulk) SaveX(ctx context.Context) []*Link {
 }
 
 // Exec executes the query.
-func (lcb *LinkCreateBulk) Exec(ctx context.Context) error {
-	_, err := lcb.Save(ctx)
+func (_c *LinkCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (lcb *LinkCreateBulk) ExecX(ctx context.Context) {
-	if err := lcb.Exec(ctx); err != nil {
+func (_c *LinkCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

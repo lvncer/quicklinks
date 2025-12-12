@@ -70,7 +70,7 @@ func (*Link) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Link fields.
-func (l *Link) assignValues(columns []string, values []any) error {
+func (_m *Link) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -80,68 +80,68 @@ func (l *Link) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				l.ID = *value
+				_m.ID = *value
 			}
 		case link.FieldUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				l.UserID = new(string)
-				*l.UserID = value.String
+				_m.UserID = new(string)
+				*_m.UserID = value.String
 			}
 		case link.FieldURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field url", values[i])
 			} else if value.Valid {
-				l.URL = value.String
+				_m.URL = value.String
 			}
 		case link.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field title", values[i])
 			} else if value.Valid {
-				l.Title = new(string)
-				*l.Title = value.String
+				_m.Title = new(string)
+				*_m.Title = value.String
 			}
 		case link.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				l.Description = new(string)
-				*l.Description = value.String
+				_m.Description = new(string)
+				*_m.Description = value.String
 			}
 		case link.FieldDomain:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field domain", values[i])
 			} else if value.Valid {
-				l.Domain = new(string)
-				*l.Domain = value.String
+				_m.Domain = new(string)
+				*_m.Domain = value.String
 			}
 		case link.FieldOgImage:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field og_image", values[i])
 			} else if value.Valid {
-				l.OgImage = new(string)
-				*l.OgImage = value.String
+				_m.OgImage = new(string)
+				*_m.OgImage = value.String
 			}
 		case link.FieldPageURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field page_url", values[i])
 			} else if value.Valid {
-				l.PageURL = new(string)
-				*l.PageURL = value.String
+				_m.PageURL = new(string)
+				*_m.PageURL = value.String
 			}
 		case link.FieldNote:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field note", values[i])
 			} else if value.Valid {
-				l.Note = new(string)
-				*l.Note = value.String
+				_m.Note = new(string)
+				*_m.Note = value.String
 			}
 		case link.FieldTags:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field tags", values[i])
 			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &l.Tags); err != nil {
+				if err := json.Unmarshal(*value, &_m.Tags); err != nil {
 					return fmt.Errorf("unmarshal field tags: %w", err)
 				}
 			}
@@ -149,7 +149,7 @@ func (l *Link) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field metadata", values[i])
 			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &l.Metadata); err != nil {
+				if err := json.Unmarshal(*value, &_m.Metadata); err != nil {
 					return fmt.Errorf("unmarshal field metadata: %w", err)
 				}
 			}
@@ -157,23 +157,23 @@ func (l *Link) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field saved_at", values[i])
 			} else if value.Valid {
-				l.SavedAt = value.Time
+				_m.SavedAt = value.Time
 			}
 		case link.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				l.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case link.FieldPublishedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field published_at", values[i])
 			} else if value.Valid {
-				l.PublishedAt = new(time.Time)
-				*l.PublishedAt = value.Time
+				_m.PublishedAt = new(time.Time)
+				*_m.PublishedAt = value.Time
 			}
 		default:
-			l.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -181,84 +181,84 @@ func (l *Link) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Link.
 // This includes values selected through modifiers, order, etc.
-func (l *Link) Value(name string) (ent.Value, error) {
-	return l.selectValues.Get(name)
+func (_m *Link) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this Link.
 // Note that you need to call Link.Unwrap() before calling this method if this Link
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (l *Link) Update() *LinkUpdateOne {
-	return NewLinkClient(l.config).UpdateOne(l)
+func (_m *Link) Update() *LinkUpdateOne {
+	return NewLinkClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Link entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (l *Link) Unwrap() *Link {
-	_tx, ok := l.config.driver.(*txDriver)
+func (_m *Link) Unwrap() *Link {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Link is not a transactional entity")
 	}
-	l.config.driver = _tx.drv
-	return l
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (l *Link) String() string {
+func (_m *Link) String() string {
 	var builder strings.Builder
 	builder.WriteString("Link(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", l.ID))
-	if v := l.UserID; v != nil {
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.UserID; v != nil {
 		builder.WriteString("user_id=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	builder.WriteString("url=")
-	builder.WriteString(l.URL)
+	builder.WriteString(_m.URL)
 	builder.WriteString(", ")
-	if v := l.Title; v != nil {
+	if v := _m.Title; v != nil {
 		builder.WriteString("title=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := l.Description; v != nil {
+	if v := _m.Description; v != nil {
 		builder.WriteString("description=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := l.Domain; v != nil {
+	if v := _m.Domain; v != nil {
 		builder.WriteString("domain=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := l.OgImage; v != nil {
+	if v := _m.OgImage; v != nil {
 		builder.WriteString("og_image=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := l.PageURL; v != nil {
+	if v := _m.PageURL; v != nil {
 		builder.WriteString("page_url=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := l.Note; v != nil {
+	if v := _m.Note; v != nil {
 		builder.WriteString("note=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	builder.WriteString("tags=")
-	builder.WriteString(fmt.Sprintf("%v", l.Tags))
+	builder.WriteString(fmt.Sprintf("%v", _m.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("metadata=")
-	builder.WriteString(fmt.Sprintf("%v", l.Metadata))
+	builder.WriteString(fmt.Sprintf("%v", _m.Metadata))
 	builder.WriteString(", ")
 	builder.WriteString("saved_at=")
-	builder.WriteString(l.SavedAt.Format(time.ANSIC))
+	builder.WriteString(_m.SavedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
-	builder.WriteString(l.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := l.PublishedAt; v != nil {
+	if v := _m.PublishedAt; v != nil {
 		builder.WriteString("published_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}

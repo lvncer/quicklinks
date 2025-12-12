@@ -24,250 +24,250 @@ type LinkUpdate struct {
 }
 
 // Where appends a list predicates to the LinkUpdate builder.
-func (lu *LinkUpdate) Where(ps ...predicate.Link) *LinkUpdate {
-	lu.mutation.Where(ps...)
-	return lu
+func (_u *LinkUpdate) Where(ps ...predicate.Link) *LinkUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUserID sets the "user_id" field.
-func (lu *LinkUpdate) SetUserID(s string) *LinkUpdate {
-	lu.mutation.SetUserID(s)
-	return lu
+func (_u *LinkUpdate) SetUserID(v string) *LinkUpdate {
+	_u.mutation.SetUserID(v)
+	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableUserID(s *string) *LinkUpdate {
-	if s != nil {
-		lu.SetUserID(*s)
+func (_u *LinkUpdate) SetNillableUserID(v *string) *LinkUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearUserID clears the value of the "user_id" field.
-func (lu *LinkUpdate) ClearUserID() *LinkUpdate {
-	lu.mutation.ClearUserID()
-	return lu
+func (_u *LinkUpdate) ClearUserID() *LinkUpdate {
+	_u.mutation.ClearUserID()
+	return _u
 }
 
 // SetURL sets the "url" field.
-func (lu *LinkUpdate) SetURL(s string) *LinkUpdate {
-	lu.mutation.SetURL(s)
-	return lu
+func (_u *LinkUpdate) SetURL(v string) *LinkUpdate {
+	_u.mutation.SetURL(v)
+	return _u
 }
 
 // SetNillableURL sets the "url" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableURL(s *string) *LinkUpdate {
-	if s != nil {
-		lu.SetURL(*s)
+func (_u *LinkUpdate) SetNillableURL(v *string) *LinkUpdate {
+	if v != nil {
+		_u.SetURL(*v)
 	}
-	return lu
+	return _u
 }
 
 // SetTitle sets the "title" field.
-func (lu *LinkUpdate) SetTitle(s string) *LinkUpdate {
-	lu.mutation.SetTitle(s)
-	return lu
+func (_u *LinkUpdate) SetTitle(v string) *LinkUpdate {
+	_u.mutation.SetTitle(v)
+	return _u
 }
 
 // SetNillableTitle sets the "title" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableTitle(s *string) *LinkUpdate {
-	if s != nil {
-		lu.SetTitle(*s)
+func (_u *LinkUpdate) SetNillableTitle(v *string) *LinkUpdate {
+	if v != nil {
+		_u.SetTitle(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearTitle clears the value of the "title" field.
-func (lu *LinkUpdate) ClearTitle() *LinkUpdate {
-	lu.mutation.ClearTitle()
-	return lu
+func (_u *LinkUpdate) ClearTitle() *LinkUpdate {
+	_u.mutation.ClearTitle()
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (lu *LinkUpdate) SetDescription(s string) *LinkUpdate {
-	lu.mutation.SetDescription(s)
-	return lu
+func (_u *LinkUpdate) SetDescription(v string) *LinkUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableDescription(s *string) *LinkUpdate {
-	if s != nil {
-		lu.SetDescription(*s)
+func (_u *LinkUpdate) SetNillableDescription(v *string) *LinkUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (lu *LinkUpdate) ClearDescription() *LinkUpdate {
-	lu.mutation.ClearDescription()
-	return lu
+func (_u *LinkUpdate) ClearDescription() *LinkUpdate {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetDomain sets the "domain" field.
-func (lu *LinkUpdate) SetDomain(s string) *LinkUpdate {
-	lu.mutation.SetDomain(s)
-	return lu
+func (_u *LinkUpdate) SetDomain(v string) *LinkUpdate {
+	_u.mutation.SetDomain(v)
+	return _u
 }
 
 // SetNillableDomain sets the "domain" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableDomain(s *string) *LinkUpdate {
-	if s != nil {
-		lu.SetDomain(*s)
+func (_u *LinkUpdate) SetNillableDomain(v *string) *LinkUpdate {
+	if v != nil {
+		_u.SetDomain(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearDomain clears the value of the "domain" field.
-func (lu *LinkUpdate) ClearDomain() *LinkUpdate {
-	lu.mutation.ClearDomain()
-	return lu
+func (_u *LinkUpdate) ClearDomain() *LinkUpdate {
+	_u.mutation.ClearDomain()
+	return _u
 }
 
 // SetOgImage sets the "og_image" field.
-func (lu *LinkUpdate) SetOgImage(s string) *LinkUpdate {
-	lu.mutation.SetOgImage(s)
-	return lu
+func (_u *LinkUpdate) SetOgImage(v string) *LinkUpdate {
+	_u.mutation.SetOgImage(v)
+	return _u
 }
 
 // SetNillableOgImage sets the "og_image" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableOgImage(s *string) *LinkUpdate {
-	if s != nil {
-		lu.SetOgImage(*s)
+func (_u *LinkUpdate) SetNillableOgImage(v *string) *LinkUpdate {
+	if v != nil {
+		_u.SetOgImage(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearOgImage clears the value of the "og_image" field.
-func (lu *LinkUpdate) ClearOgImage() *LinkUpdate {
-	lu.mutation.ClearOgImage()
-	return lu
+func (_u *LinkUpdate) ClearOgImage() *LinkUpdate {
+	_u.mutation.ClearOgImage()
+	return _u
 }
 
 // SetPageURL sets the "page_url" field.
-func (lu *LinkUpdate) SetPageURL(s string) *LinkUpdate {
-	lu.mutation.SetPageURL(s)
-	return lu
+func (_u *LinkUpdate) SetPageURL(v string) *LinkUpdate {
+	_u.mutation.SetPageURL(v)
+	return _u
 }
 
 // SetNillablePageURL sets the "page_url" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillablePageURL(s *string) *LinkUpdate {
-	if s != nil {
-		lu.SetPageURL(*s)
+func (_u *LinkUpdate) SetNillablePageURL(v *string) *LinkUpdate {
+	if v != nil {
+		_u.SetPageURL(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearPageURL clears the value of the "page_url" field.
-func (lu *LinkUpdate) ClearPageURL() *LinkUpdate {
-	lu.mutation.ClearPageURL()
-	return lu
+func (_u *LinkUpdate) ClearPageURL() *LinkUpdate {
+	_u.mutation.ClearPageURL()
+	return _u
 }
 
 // SetNote sets the "note" field.
-func (lu *LinkUpdate) SetNote(s string) *LinkUpdate {
-	lu.mutation.SetNote(s)
-	return lu
+func (_u *LinkUpdate) SetNote(v string) *LinkUpdate {
+	_u.mutation.SetNote(v)
+	return _u
 }
 
 // SetNillableNote sets the "note" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableNote(s *string) *LinkUpdate {
-	if s != nil {
-		lu.SetNote(*s)
+func (_u *LinkUpdate) SetNillableNote(v *string) *LinkUpdate {
+	if v != nil {
+		_u.SetNote(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearNote clears the value of the "note" field.
-func (lu *LinkUpdate) ClearNote() *LinkUpdate {
-	lu.mutation.ClearNote()
-	return lu
+func (_u *LinkUpdate) ClearNote() *LinkUpdate {
+	_u.mutation.ClearNote()
+	return _u
 }
 
 // SetTags sets the "tags" field.
-func (lu *LinkUpdate) SetTags(s []string) *LinkUpdate {
-	lu.mutation.SetTags(s)
-	return lu
+func (_u *LinkUpdate) SetTags(v []string) *LinkUpdate {
+	_u.mutation.SetTags(v)
+	return _u
 }
 
-// AppendTags appends s to the "tags" field.
-func (lu *LinkUpdate) AppendTags(s []string) *LinkUpdate {
-	lu.mutation.AppendTags(s)
-	return lu
+// AppendTags appends value to the "tags" field.
+func (_u *LinkUpdate) AppendTags(v []string) *LinkUpdate {
+	_u.mutation.AppendTags(v)
+	return _u
 }
 
 // ClearTags clears the value of the "tags" field.
-func (lu *LinkUpdate) ClearTags() *LinkUpdate {
-	lu.mutation.ClearTags()
-	return lu
+func (_u *LinkUpdate) ClearTags() *LinkUpdate {
+	_u.mutation.ClearTags()
+	return _u
 }
 
 // SetMetadata sets the "metadata" field.
-func (lu *LinkUpdate) SetMetadata(m map[string]interface{}) *LinkUpdate {
-	lu.mutation.SetMetadata(m)
-	return lu
+func (_u *LinkUpdate) SetMetadata(v map[string]interface{}) *LinkUpdate {
+	_u.mutation.SetMetadata(v)
+	return _u
 }
 
 // SetSavedAt sets the "saved_at" field.
-func (lu *LinkUpdate) SetSavedAt(t time.Time) *LinkUpdate {
-	lu.mutation.SetSavedAt(t)
-	return lu
+func (_u *LinkUpdate) SetSavedAt(v time.Time) *LinkUpdate {
+	_u.mutation.SetSavedAt(v)
+	return _u
 }
 
 // SetNillableSavedAt sets the "saved_at" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableSavedAt(t *time.Time) *LinkUpdate {
-	if t != nil {
-		lu.SetSavedAt(*t)
+func (_u *LinkUpdate) SetNillableSavedAt(v *time.Time) *LinkUpdate {
+	if v != nil {
+		_u.SetSavedAt(*v)
 	}
-	return lu
+	return _u
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (lu *LinkUpdate) SetCreatedAt(t time.Time) *LinkUpdate {
-	lu.mutation.SetCreatedAt(t)
-	return lu
+func (_u *LinkUpdate) SetCreatedAt(v time.Time) *LinkUpdate {
+	_u.mutation.SetCreatedAt(v)
+	return _u
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableCreatedAt(t *time.Time) *LinkUpdate {
-	if t != nil {
-		lu.SetCreatedAt(*t)
+func (_u *LinkUpdate) SetNillableCreatedAt(v *time.Time) *LinkUpdate {
+	if v != nil {
+		_u.SetCreatedAt(*v)
 	}
-	return lu
+	return _u
 }
 
 // SetPublishedAt sets the "published_at" field.
-func (lu *LinkUpdate) SetPublishedAt(t time.Time) *LinkUpdate {
-	lu.mutation.SetPublishedAt(t)
-	return lu
+func (_u *LinkUpdate) SetPublishedAt(v time.Time) *LinkUpdate {
+	_u.mutation.SetPublishedAt(v)
+	return _u
 }
 
 // SetNillablePublishedAt sets the "published_at" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillablePublishedAt(t *time.Time) *LinkUpdate {
-	if t != nil {
-		lu.SetPublishedAt(*t)
+func (_u *LinkUpdate) SetNillablePublishedAt(v *time.Time) *LinkUpdate {
+	if v != nil {
+		_u.SetPublishedAt(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearPublishedAt clears the value of the "published_at" field.
-func (lu *LinkUpdate) ClearPublishedAt() *LinkUpdate {
-	lu.mutation.ClearPublishedAt()
-	return lu
+func (_u *LinkUpdate) ClearPublishedAt() *LinkUpdate {
+	_u.mutation.ClearPublishedAt()
+	return _u
 }
 
 // Mutation returns the LinkMutation object of the builder.
-func (lu *LinkUpdate) Mutation() *LinkMutation {
-	return lu.mutation
+func (_u *LinkUpdate) Mutation() *LinkMutation {
+	return _u.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (lu *LinkUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks(ctx, lu.sqlSave, lu.mutation, lu.hooks)
+func (_u *LinkUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (lu *LinkUpdate) SaveX(ctx context.Context) int {
-	affected, err := lu.Save(ctx)
+func (_u *LinkUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -275,21 +275,21 @@ func (lu *LinkUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (lu *LinkUpdate) Exec(ctx context.Context) error {
-	_, err := lu.Save(ctx)
+func (_u *LinkUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (lu *LinkUpdate) ExecX(ctx context.Context) {
-	if err := lu.Exec(ctx); err != nil {
+func (_u *LinkUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (lu *LinkUpdate) check() error {
-	if v, ok := lu.mutation.URL(); ok {
+func (_u *LinkUpdate) check() error {
+	if v, ok := _u.mutation.URL(); ok {
 		if err := link.URLValidator(v); err != nil {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Link.url": %w`, err)}
 		}
@@ -297,90 +297,90 @@ func (lu *LinkUpdate) check() error {
 	return nil
 }
 
-func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := lu.check(); err != nil {
-		return n, err
+func (_u *LinkUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(link.Table, link.Columns, sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID))
-	if ps := lu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := lu.mutation.UserID(); ok {
+	if value, ok := _u.mutation.UserID(); ok {
 		_spec.SetField(link.FieldUserID, field.TypeString, value)
 	}
-	if lu.mutation.UserIDCleared() {
+	if _u.mutation.UserIDCleared() {
 		_spec.ClearField(link.FieldUserID, field.TypeString)
 	}
-	if value, ok := lu.mutation.URL(); ok {
+	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(link.FieldURL, field.TypeString, value)
 	}
-	if value, ok := lu.mutation.Title(); ok {
+	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(link.FieldTitle, field.TypeString, value)
 	}
-	if lu.mutation.TitleCleared() {
+	if _u.mutation.TitleCleared() {
 		_spec.ClearField(link.FieldTitle, field.TypeString)
 	}
-	if value, ok := lu.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(link.FieldDescription, field.TypeString, value)
 	}
-	if lu.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(link.FieldDescription, field.TypeString)
 	}
-	if value, ok := lu.mutation.Domain(); ok {
+	if value, ok := _u.mutation.Domain(); ok {
 		_spec.SetField(link.FieldDomain, field.TypeString, value)
 	}
-	if lu.mutation.DomainCleared() {
+	if _u.mutation.DomainCleared() {
 		_spec.ClearField(link.FieldDomain, field.TypeString)
 	}
-	if value, ok := lu.mutation.OgImage(); ok {
+	if value, ok := _u.mutation.OgImage(); ok {
 		_spec.SetField(link.FieldOgImage, field.TypeString, value)
 	}
-	if lu.mutation.OgImageCleared() {
+	if _u.mutation.OgImageCleared() {
 		_spec.ClearField(link.FieldOgImage, field.TypeString)
 	}
-	if value, ok := lu.mutation.PageURL(); ok {
+	if value, ok := _u.mutation.PageURL(); ok {
 		_spec.SetField(link.FieldPageURL, field.TypeString, value)
 	}
-	if lu.mutation.PageURLCleared() {
+	if _u.mutation.PageURLCleared() {
 		_spec.ClearField(link.FieldPageURL, field.TypeString)
 	}
-	if value, ok := lu.mutation.Note(); ok {
+	if value, ok := _u.mutation.Note(); ok {
 		_spec.SetField(link.FieldNote, field.TypeString, value)
 	}
-	if lu.mutation.NoteCleared() {
+	if _u.mutation.NoteCleared() {
 		_spec.ClearField(link.FieldNote, field.TypeString)
 	}
-	if value, ok := lu.mutation.Tags(); ok {
+	if value, ok := _u.mutation.Tags(); ok {
 		_spec.SetField(link.FieldTags, field.TypeJSON, value)
 	}
-	if value, ok := lu.mutation.AppendedTags(); ok {
+	if value, ok := _u.mutation.AppendedTags(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, link.FieldTags, value)
 		})
 	}
-	if lu.mutation.TagsCleared() {
+	if _u.mutation.TagsCleared() {
 		_spec.ClearField(link.FieldTags, field.TypeJSON)
 	}
-	if value, ok := lu.mutation.Metadata(); ok {
+	if value, ok := _u.mutation.Metadata(); ok {
 		_spec.SetField(link.FieldMetadata, field.TypeJSON, value)
 	}
-	if value, ok := lu.mutation.SavedAt(); ok {
+	if value, ok := _u.mutation.SavedAt(); ok {
 		_spec.SetField(link.FieldSavedAt, field.TypeTime, value)
 	}
-	if value, ok := lu.mutation.CreatedAt(); ok {
+	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(link.FieldCreatedAt, field.TypeTime, value)
 	}
-	if value, ok := lu.mutation.PublishedAt(); ok {
+	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(link.FieldPublishedAt, field.TypeTime, value)
 	}
-	if lu.mutation.PublishedAtCleared() {
+	if _u.mutation.PublishedAtCleared() {
 		_spec.ClearField(link.FieldPublishedAt, field.TypeTime)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, lu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{link.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -388,8 +388,8 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	lu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // LinkUpdateOne is the builder for updating a single Link entity.
@@ -401,257 +401,257 @@ type LinkUpdateOne struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (luo *LinkUpdateOne) SetUserID(s string) *LinkUpdateOne {
-	luo.mutation.SetUserID(s)
-	return luo
+func (_u *LinkUpdateOne) SetUserID(v string) *LinkUpdateOne {
+	_u.mutation.SetUserID(v)
+	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableUserID(s *string) *LinkUpdateOne {
-	if s != nil {
-		luo.SetUserID(*s)
+func (_u *LinkUpdateOne) SetNillableUserID(v *string) *LinkUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearUserID clears the value of the "user_id" field.
-func (luo *LinkUpdateOne) ClearUserID() *LinkUpdateOne {
-	luo.mutation.ClearUserID()
-	return luo
+func (_u *LinkUpdateOne) ClearUserID() *LinkUpdateOne {
+	_u.mutation.ClearUserID()
+	return _u
 }
 
 // SetURL sets the "url" field.
-func (luo *LinkUpdateOne) SetURL(s string) *LinkUpdateOne {
-	luo.mutation.SetURL(s)
-	return luo
+func (_u *LinkUpdateOne) SetURL(v string) *LinkUpdateOne {
+	_u.mutation.SetURL(v)
+	return _u
 }
 
 // SetNillableURL sets the "url" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableURL(s *string) *LinkUpdateOne {
-	if s != nil {
-		luo.SetURL(*s)
+func (_u *LinkUpdateOne) SetNillableURL(v *string) *LinkUpdateOne {
+	if v != nil {
+		_u.SetURL(*v)
 	}
-	return luo
+	return _u
 }
 
 // SetTitle sets the "title" field.
-func (luo *LinkUpdateOne) SetTitle(s string) *LinkUpdateOne {
-	luo.mutation.SetTitle(s)
-	return luo
+func (_u *LinkUpdateOne) SetTitle(v string) *LinkUpdateOne {
+	_u.mutation.SetTitle(v)
+	return _u
 }
 
 // SetNillableTitle sets the "title" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableTitle(s *string) *LinkUpdateOne {
-	if s != nil {
-		luo.SetTitle(*s)
+func (_u *LinkUpdateOne) SetNillableTitle(v *string) *LinkUpdateOne {
+	if v != nil {
+		_u.SetTitle(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearTitle clears the value of the "title" field.
-func (luo *LinkUpdateOne) ClearTitle() *LinkUpdateOne {
-	luo.mutation.ClearTitle()
-	return luo
+func (_u *LinkUpdateOne) ClearTitle() *LinkUpdateOne {
+	_u.mutation.ClearTitle()
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (luo *LinkUpdateOne) SetDescription(s string) *LinkUpdateOne {
-	luo.mutation.SetDescription(s)
-	return luo
+func (_u *LinkUpdateOne) SetDescription(v string) *LinkUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableDescription(s *string) *LinkUpdateOne {
-	if s != nil {
-		luo.SetDescription(*s)
+func (_u *LinkUpdateOne) SetNillableDescription(v *string) *LinkUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (luo *LinkUpdateOne) ClearDescription() *LinkUpdateOne {
-	luo.mutation.ClearDescription()
-	return luo
+func (_u *LinkUpdateOne) ClearDescription() *LinkUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetDomain sets the "domain" field.
-func (luo *LinkUpdateOne) SetDomain(s string) *LinkUpdateOne {
-	luo.mutation.SetDomain(s)
-	return luo
+func (_u *LinkUpdateOne) SetDomain(v string) *LinkUpdateOne {
+	_u.mutation.SetDomain(v)
+	return _u
 }
 
 // SetNillableDomain sets the "domain" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableDomain(s *string) *LinkUpdateOne {
-	if s != nil {
-		luo.SetDomain(*s)
+func (_u *LinkUpdateOne) SetNillableDomain(v *string) *LinkUpdateOne {
+	if v != nil {
+		_u.SetDomain(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearDomain clears the value of the "domain" field.
-func (luo *LinkUpdateOne) ClearDomain() *LinkUpdateOne {
-	luo.mutation.ClearDomain()
-	return luo
+func (_u *LinkUpdateOne) ClearDomain() *LinkUpdateOne {
+	_u.mutation.ClearDomain()
+	return _u
 }
 
 // SetOgImage sets the "og_image" field.
-func (luo *LinkUpdateOne) SetOgImage(s string) *LinkUpdateOne {
-	luo.mutation.SetOgImage(s)
-	return luo
+func (_u *LinkUpdateOne) SetOgImage(v string) *LinkUpdateOne {
+	_u.mutation.SetOgImage(v)
+	return _u
 }
 
 // SetNillableOgImage sets the "og_image" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableOgImage(s *string) *LinkUpdateOne {
-	if s != nil {
-		luo.SetOgImage(*s)
+func (_u *LinkUpdateOne) SetNillableOgImage(v *string) *LinkUpdateOne {
+	if v != nil {
+		_u.SetOgImage(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearOgImage clears the value of the "og_image" field.
-func (luo *LinkUpdateOne) ClearOgImage() *LinkUpdateOne {
-	luo.mutation.ClearOgImage()
-	return luo
+func (_u *LinkUpdateOne) ClearOgImage() *LinkUpdateOne {
+	_u.mutation.ClearOgImage()
+	return _u
 }
 
 // SetPageURL sets the "page_url" field.
-func (luo *LinkUpdateOne) SetPageURL(s string) *LinkUpdateOne {
-	luo.mutation.SetPageURL(s)
-	return luo
+func (_u *LinkUpdateOne) SetPageURL(v string) *LinkUpdateOne {
+	_u.mutation.SetPageURL(v)
+	return _u
 }
 
 // SetNillablePageURL sets the "page_url" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillablePageURL(s *string) *LinkUpdateOne {
-	if s != nil {
-		luo.SetPageURL(*s)
+func (_u *LinkUpdateOne) SetNillablePageURL(v *string) *LinkUpdateOne {
+	if v != nil {
+		_u.SetPageURL(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearPageURL clears the value of the "page_url" field.
-func (luo *LinkUpdateOne) ClearPageURL() *LinkUpdateOne {
-	luo.mutation.ClearPageURL()
-	return luo
+func (_u *LinkUpdateOne) ClearPageURL() *LinkUpdateOne {
+	_u.mutation.ClearPageURL()
+	return _u
 }
 
 // SetNote sets the "note" field.
-func (luo *LinkUpdateOne) SetNote(s string) *LinkUpdateOne {
-	luo.mutation.SetNote(s)
-	return luo
+func (_u *LinkUpdateOne) SetNote(v string) *LinkUpdateOne {
+	_u.mutation.SetNote(v)
+	return _u
 }
 
 // SetNillableNote sets the "note" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableNote(s *string) *LinkUpdateOne {
-	if s != nil {
-		luo.SetNote(*s)
+func (_u *LinkUpdateOne) SetNillableNote(v *string) *LinkUpdateOne {
+	if v != nil {
+		_u.SetNote(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearNote clears the value of the "note" field.
-func (luo *LinkUpdateOne) ClearNote() *LinkUpdateOne {
-	luo.mutation.ClearNote()
-	return luo
+func (_u *LinkUpdateOne) ClearNote() *LinkUpdateOne {
+	_u.mutation.ClearNote()
+	return _u
 }
 
 // SetTags sets the "tags" field.
-func (luo *LinkUpdateOne) SetTags(s []string) *LinkUpdateOne {
-	luo.mutation.SetTags(s)
-	return luo
+func (_u *LinkUpdateOne) SetTags(v []string) *LinkUpdateOne {
+	_u.mutation.SetTags(v)
+	return _u
 }
 
-// AppendTags appends s to the "tags" field.
-func (luo *LinkUpdateOne) AppendTags(s []string) *LinkUpdateOne {
-	luo.mutation.AppendTags(s)
-	return luo
+// AppendTags appends value to the "tags" field.
+func (_u *LinkUpdateOne) AppendTags(v []string) *LinkUpdateOne {
+	_u.mutation.AppendTags(v)
+	return _u
 }
 
 // ClearTags clears the value of the "tags" field.
-func (luo *LinkUpdateOne) ClearTags() *LinkUpdateOne {
-	luo.mutation.ClearTags()
-	return luo
+func (_u *LinkUpdateOne) ClearTags() *LinkUpdateOne {
+	_u.mutation.ClearTags()
+	return _u
 }
 
 // SetMetadata sets the "metadata" field.
-func (luo *LinkUpdateOne) SetMetadata(m map[string]interface{}) *LinkUpdateOne {
-	luo.mutation.SetMetadata(m)
-	return luo
+func (_u *LinkUpdateOne) SetMetadata(v map[string]interface{}) *LinkUpdateOne {
+	_u.mutation.SetMetadata(v)
+	return _u
 }
 
 // SetSavedAt sets the "saved_at" field.
-func (luo *LinkUpdateOne) SetSavedAt(t time.Time) *LinkUpdateOne {
-	luo.mutation.SetSavedAt(t)
-	return luo
+func (_u *LinkUpdateOne) SetSavedAt(v time.Time) *LinkUpdateOne {
+	_u.mutation.SetSavedAt(v)
+	return _u
 }
 
 // SetNillableSavedAt sets the "saved_at" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableSavedAt(t *time.Time) *LinkUpdateOne {
-	if t != nil {
-		luo.SetSavedAt(*t)
+func (_u *LinkUpdateOne) SetNillableSavedAt(v *time.Time) *LinkUpdateOne {
+	if v != nil {
+		_u.SetSavedAt(*v)
 	}
-	return luo
+	return _u
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (luo *LinkUpdateOne) SetCreatedAt(t time.Time) *LinkUpdateOne {
-	luo.mutation.SetCreatedAt(t)
-	return luo
+func (_u *LinkUpdateOne) SetCreatedAt(v time.Time) *LinkUpdateOne {
+	_u.mutation.SetCreatedAt(v)
+	return _u
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableCreatedAt(t *time.Time) *LinkUpdateOne {
-	if t != nil {
-		luo.SetCreatedAt(*t)
+func (_u *LinkUpdateOne) SetNillableCreatedAt(v *time.Time) *LinkUpdateOne {
+	if v != nil {
+		_u.SetCreatedAt(*v)
 	}
-	return luo
+	return _u
 }
 
 // SetPublishedAt sets the "published_at" field.
-func (luo *LinkUpdateOne) SetPublishedAt(t time.Time) *LinkUpdateOne {
-	luo.mutation.SetPublishedAt(t)
-	return luo
+func (_u *LinkUpdateOne) SetPublishedAt(v time.Time) *LinkUpdateOne {
+	_u.mutation.SetPublishedAt(v)
+	return _u
 }
 
 // SetNillablePublishedAt sets the "published_at" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillablePublishedAt(t *time.Time) *LinkUpdateOne {
-	if t != nil {
-		luo.SetPublishedAt(*t)
+func (_u *LinkUpdateOne) SetNillablePublishedAt(v *time.Time) *LinkUpdateOne {
+	if v != nil {
+		_u.SetPublishedAt(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearPublishedAt clears the value of the "published_at" field.
-func (luo *LinkUpdateOne) ClearPublishedAt() *LinkUpdateOne {
-	luo.mutation.ClearPublishedAt()
-	return luo
+func (_u *LinkUpdateOne) ClearPublishedAt() *LinkUpdateOne {
+	_u.mutation.ClearPublishedAt()
+	return _u
 }
 
 // Mutation returns the LinkMutation object of the builder.
-func (luo *LinkUpdateOne) Mutation() *LinkMutation {
-	return luo.mutation
+func (_u *LinkUpdateOne) Mutation() *LinkMutation {
+	return _u.mutation
 }
 
 // Where appends a list predicates to the LinkUpdate builder.
-func (luo *LinkUpdateOne) Where(ps ...predicate.Link) *LinkUpdateOne {
-	luo.mutation.Where(ps...)
-	return luo
+func (_u *LinkUpdateOne) Where(ps ...predicate.Link) *LinkUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (luo *LinkUpdateOne) Select(field string, fields ...string) *LinkUpdateOne {
-	luo.fields = append([]string{field}, fields...)
-	return luo
+func (_u *LinkUpdateOne) Select(field string, fields ...string) *LinkUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Link entity.
-func (luo *LinkUpdateOne) Save(ctx context.Context) (*Link, error) {
-	return withHooks(ctx, luo.sqlSave, luo.mutation, luo.hooks)
+func (_u *LinkUpdateOne) Save(ctx context.Context) (*Link, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (luo *LinkUpdateOne) SaveX(ctx context.Context) *Link {
-	node, err := luo.Save(ctx)
+func (_u *LinkUpdateOne) SaveX(ctx context.Context) *Link {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -659,21 +659,21 @@ func (luo *LinkUpdateOne) SaveX(ctx context.Context) *Link {
 }
 
 // Exec executes the query on the entity.
-func (luo *LinkUpdateOne) Exec(ctx context.Context) error {
-	_, err := luo.Save(ctx)
+func (_u *LinkUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (luo *LinkUpdateOne) ExecX(ctx context.Context) {
-	if err := luo.Exec(ctx); err != nil {
+func (_u *LinkUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (luo *LinkUpdateOne) check() error {
-	if v, ok := luo.mutation.URL(); ok {
+func (_u *LinkUpdateOne) check() error {
+	if v, ok := _u.mutation.URL(); ok {
 		if err := link.URLValidator(v); err != nil {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Link.url": %w`, err)}
 		}
@@ -681,17 +681,17 @@ func (luo *LinkUpdateOne) check() error {
 	return nil
 }
 
-func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) {
-	if err := luo.check(); err != nil {
+func (_u *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(link.Table, link.Columns, sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID))
-	id, ok := luo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Link.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := luo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, link.FieldID)
 		for _, f := range fields {
@@ -703,88 +703,88 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) 
 			}
 		}
 	}
-	if ps := luo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := luo.mutation.UserID(); ok {
+	if value, ok := _u.mutation.UserID(); ok {
 		_spec.SetField(link.FieldUserID, field.TypeString, value)
 	}
-	if luo.mutation.UserIDCleared() {
+	if _u.mutation.UserIDCleared() {
 		_spec.ClearField(link.FieldUserID, field.TypeString)
 	}
-	if value, ok := luo.mutation.URL(); ok {
+	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(link.FieldURL, field.TypeString, value)
 	}
-	if value, ok := luo.mutation.Title(); ok {
+	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(link.FieldTitle, field.TypeString, value)
 	}
-	if luo.mutation.TitleCleared() {
+	if _u.mutation.TitleCleared() {
 		_spec.ClearField(link.FieldTitle, field.TypeString)
 	}
-	if value, ok := luo.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(link.FieldDescription, field.TypeString, value)
 	}
-	if luo.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(link.FieldDescription, field.TypeString)
 	}
-	if value, ok := luo.mutation.Domain(); ok {
+	if value, ok := _u.mutation.Domain(); ok {
 		_spec.SetField(link.FieldDomain, field.TypeString, value)
 	}
-	if luo.mutation.DomainCleared() {
+	if _u.mutation.DomainCleared() {
 		_spec.ClearField(link.FieldDomain, field.TypeString)
 	}
-	if value, ok := luo.mutation.OgImage(); ok {
+	if value, ok := _u.mutation.OgImage(); ok {
 		_spec.SetField(link.FieldOgImage, field.TypeString, value)
 	}
-	if luo.mutation.OgImageCleared() {
+	if _u.mutation.OgImageCleared() {
 		_spec.ClearField(link.FieldOgImage, field.TypeString)
 	}
-	if value, ok := luo.mutation.PageURL(); ok {
+	if value, ok := _u.mutation.PageURL(); ok {
 		_spec.SetField(link.FieldPageURL, field.TypeString, value)
 	}
-	if luo.mutation.PageURLCleared() {
+	if _u.mutation.PageURLCleared() {
 		_spec.ClearField(link.FieldPageURL, field.TypeString)
 	}
-	if value, ok := luo.mutation.Note(); ok {
+	if value, ok := _u.mutation.Note(); ok {
 		_spec.SetField(link.FieldNote, field.TypeString, value)
 	}
-	if luo.mutation.NoteCleared() {
+	if _u.mutation.NoteCleared() {
 		_spec.ClearField(link.FieldNote, field.TypeString)
 	}
-	if value, ok := luo.mutation.Tags(); ok {
+	if value, ok := _u.mutation.Tags(); ok {
 		_spec.SetField(link.FieldTags, field.TypeJSON, value)
 	}
-	if value, ok := luo.mutation.AppendedTags(); ok {
+	if value, ok := _u.mutation.AppendedTags(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, link.FieldTags, value)
 		})
 	}
-	if luo.mutation.TagsCleared() {
+	if _u.mutation.TagsCleared() {
 		_spec.ClearField(link.FieldTags, field.TypeJSON)
 	}
-	if value, ok := luo.mutation.Metadata(); ok {
+	if value, ok := _u.mutation.Metadata(); ok {
 		_spec.SetField(link.FieldMetadata, field.TypeJSON, value)
 	}
-	if value, ok := luo.mutation.SavedAt(); ok {
+	if value, ok := _u.mutation.SavedAt(); ok {
 		_spec.SetField(link.FieldSavedAt, field.TypeTime, value)
 	}
-	if value, ok := luo.mutation.CreatedAt(); ok {
+	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(link.FieldCreatedAt, field.TypeTime, value)
 	}
-	if value, ok := luo.mutation.PublishedAt(); ok {
+	if value, ok := _u.mutation.PublishedAt(); ok {
 		_spec.SetField(link.FieldPublishedAt, field.TypeTime, value)
 	}
-	if luo.mutation.PublishedAtCleared() {
+	if _u.mutation.PublishedAtCleared() {
 		_spec.ClearField(link.FieldPublishedAt, field.TypeTime)
 	}
-	_node = &Link{config: luo.config}
+	_node = &Link{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, luo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{link.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -792,6 +792,6 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) 
 		}
 		return nil, err
 	}
-	luo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

@@ -20,6 +20,7 @@ type Link struct {
 	OGImage     string     `json:"og_image"`
 	PageURL     string     `json:"page_url"`
 	Note        string     `json:"note"`
+	Tags        []string   `json:"tags"`
 	UserID      string     `json:"user_id"`
 	PublishedAt *time.Time `json:"published_at"`
 	SavedAt     time.Time  `json:"saved_at"`

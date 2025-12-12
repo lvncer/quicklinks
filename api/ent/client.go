@@ -252,8 +252,8 @@ func (c *LinkClient) Update() *LinkUpdate {
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *LinkClient) UpdateOne(l *Link) *LinkUpdateOne {
-	mutation := newLinkMutation(c.config, OpUpdateOne, withLink(l))
+func (c *LinkClient) UpdateOne(_m *Link) *LinkUpdateOne {
+	mutation := newLinkMutation(c.config, OpUpdateOne, withLink(_m))
 	return &LinkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
@@ -270,8 +270,8 @@ func (c *LinkClient) Delete() *LinkDelete {
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *LinkClient) DeleteOne(l *Link) *LinkDeleteOne {
-	return c.DeleteOneID(l.ID)
+func (c *LinkClient) DeleteOne(_m *Link) *LinkDeleteOne {
+	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.

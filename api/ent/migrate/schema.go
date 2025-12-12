@@ -3,6 +3,7 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
@@ -10,19 +11,19 @@ import (
 var (
 	// LinksColumns holds the columns for the "links" table.
 	LinksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "user_id", Type: field.TypeString, Nullable: true},
-		{Name: "url", Type: field.TypeString},
-		{Name: "title", Type: field.TypeString, Nullable: true},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "domain", Type: field.TypeString, Nullable: true},
-		{Name: "og_image", Type: field.TypeString, Nullable: true},
-		{Name: "page_url", Type: field.TypeString, Nullable: true},
-		{Name: "note", Type: field.TypeString, Nullable: true},
+		{Name: "id", Type: field.TypeUUID, Default: schema.Expr("gen_random_uuid()")},
+		{Name: "user_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "url", Type: field.TypeString, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "title", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "description", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "domain", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "og_image", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "page_url", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "note", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "metadata", Type: field.TypeJSON},
-		{Name: "saved_at", Type: field.TypeTime},
-		{Name: "created_at", Type: field.TypeTime},
+		{Name: "metadata", Type: field.TypeJSON, Default: schema.Expr("'{}'::jsonb")},
+		{Name: "saved_at", Type: field.TypeTime, Default: schema.Expr("now()")},
+		{Name: "created_at", Type: field.TypeTime, Default: schema.Expr("now()")},
 		{Name: "published_at", Type: field.TypeTime, Nullable: true},
 	}
 	// LinksTable holds the schema information for the "links" table.
@@ -32,19 +33,32 @@ var (
 		PrimaryKey: []*schema.Column{LinksColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "link_user_id_saved_at",
+				Name:    "idx_links_user_saved_at",
 				Unique:  false,
 				Columns: []*schema.Column{LinksColumns[1], LinksColumns[11]},
+				Annotation: &entsql.IndexAnnotation{
+					DescColumns: map[string]bool{
+						LinksColumns[11].Name: true,
+					},
+				},
 			},
 			{
-				Name:    "link_domain",
+				Name:    "idx_links_domain",
 				Unique:  false,
 				Columns: []*schema.Column{LinksColumns[5]},
 			},
 			{
-				Name:    "link_published_at",
+				Name:    "idx_links_published_at",
 				Unique:  false,
 				Columns: []*schema.Column{LinksColumns[13]},
+			},
+			{
+				Name:    "idx_links_tags_gin",
+				Unique:  false,
+				Columns: []*schema.Column{LinksColumns[9]},
+				Annotation: &entsql.IndexAnnotation{
+					Type: "GIN",
+				},
 			},
 		},
 	}

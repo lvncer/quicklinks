@@ -15,6 +15,7 @@ func entLinkToModel(l *appent.Link) model.Link {
 		pageURL     string
 		note        string
 		userID      string
+		tags        []string
 	)
 
 	if l.Title != nil {
@@ -39,6 +40,11 @@ func entLinkToModel(l *appent.Link) model.Link {
 		userID = *l.UserID
 	}
 
+	tags = l.Tags
+	if tags == nil {
+		tags = []string{}
+	}
+
 	return model.Link{
 		ID:          l.ID.String(),
 		URL:         l.URL,
@@ -48,6 +54,7 @@ func entLinkToModel(l *appent.Link) model.Link {
 		OGImage:     ogImage,
 		PageURL:     pageURL,
 		Note:        note,
+		Tags:        tags,
 		UserID:      userID,
 		PublishedAt: l.PublishedAt,
 		SavedAt:     l.SavedAt,

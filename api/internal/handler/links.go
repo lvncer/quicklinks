@@ -122,10 +122,76 @@ func (h *LinksHandler) GetLinks(c *gin.Context) {
 		limit = 50
 	}
 
+	// Parse filter query parameters.
+	var (
+		from *time.Time
+		to   *time.Time // exclusive
+	)
+
+	if fromStr := c.Query("from"); fromStr != "" {
+		t, err := time.Parse("2006-01-02", fromStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":  "invalid from",
+				"detail": "from must be YYYY-MM-DD",
+			})
+			return
+		}
+		from = &t
+	}
+
+	if toStr := c.Query("to"); toStr != "" {
+		t, err := time.Parse("2006-01-02", toStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":  "invalid to",
+				"detail": "to must be YYYY-MM-DD",
+			})
+			return
+		}
+		t = t.AddDate(0, 0, 1) // make it exclusive (end-of-day inclusive behavior)
+		to = &t
+	}
+
+	if from != nil && to != nil && !from.Before(*to) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":  "invalid range",
+			"detail": "from must be before or equal to to",
+		})
+		return
+	}
+
+	domain := strings.TrimSpace(c.Query("domain"))
+	domain = strings.TrimPrefix(domain, "www.")
+
+	tags := c.QueryArray("tag")
+	if len(tags) > 0 {
+		uniq := make(map[string]struct{}, len(tags))
+		normalized := make([]string, 0, len(tags))
+		for _, t := range tags {
+			t = strings.TrimSpace(t)
+			if t == "" {
+				continue
+			}
+			if _, ok := uniq[t]; ok {
+				continue
+			}
+			uniq[t] = struct{}{}
+			normalized = append(normalized, t)
+		}
+		tags = normalized
+	}
+
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	links, err := h.repo.ListLinks(ctx, userID, limit)
+	links, err := h.repo.ListLinks(ctx, userID, repository.ListLinksFilter{
+		Limit:  limit,
+		From:   from,
+		To:     to,
+		Domain: domain,
+		Tags:   tags,
+	})
 	if err != nil {
 		log.Printf("repository error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch links"})
