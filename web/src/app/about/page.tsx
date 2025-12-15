@@ -231,17 +231,15 @@ export default function AboutPage() {
                   </div>
                   <h3 className="text-xl font-bold">拡張機能を導入</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    現状は手動でパッケージ化する必要があります。
                     <Link
-                      href="https://github.com/lvncer/quicklinks/blob/main/documents/SETUP_Extension.md"
+                      href="https://chromewebstore.google.com/detail/quicklinks/jofhehfnmliefoipncjbimmomenmegmj?authuser=0&hl=ja&pli=1"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="ml-1 underline underline-offset-4 hover:text-foreground transition-colors"
                     >
-                      セットアップ手順
+                      Chrome ウェブストア
                     </Link>
-                    <br />
-                    Chrome ウェブストア公開は Coming Soon。
+                    から QuickLinks をインストールします。
                   </p>
                 </div>
 

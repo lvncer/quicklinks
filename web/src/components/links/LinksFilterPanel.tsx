@@ -1,10 +1,18 @@
 "use client";
 
-import AppHeader from "@/components/layouts/AppHeader";
-import LinkList from "@/components/LinkList";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { ChevronUp, ChevronDown } from "lucide-react";
+
+export type LinksListActiveFilters = {
+  from: string;
+  to: string;
+  domain: string;
+  tags: string[];
+  limit: number;
+};
 
 function parseTagsInput(input: string): string[] {
   return Array.from(
@@ -17,65 +25,47 @@ function parseTagsInput(input: string): string[] {
   );
 }
 
-export default function LinksPageClient() {
+export default function LinksFilterPanel({
+  active,
+}: {
+  active: LinksListActiveFilters;
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const active = useMemo(() => {
-    const from = searchParams.get("from") ?? "";
-    const to = searchParams.get("to") ?? "";
-    const domain = searchParams.get("domain") ?? "";
-    const tags = searchParams
-      .getAll("tag")
-      .map((t) => t.trim())
-      .filter(Boolean);
-
-    const limitRaw = searchParams.get("limit") ?? "50";
-    const limitNum = Number(limitRaw);
-    const limit = Number.isFinite(limitNum)
-      ? Math.min(100, Math.max(1, limitNum))
-      : 50;
-
-    return {
-      from,
-      to,
-      domain,
-      tags,
-      limit,
-    };
-  }, [searchParams]);
-
-  // Track previous active values to only update when they actually change
-  const prevActiveRef = useRef(active);
+  const [isOpen, setIsOpen] = useState(false);
   const [fromInput, setFromInput] = useState(active.from);
   const [toInput, setToInput] = useState(active.to);
   const [domainInput, setDomainInput] = useState(active.domain);
   const [tagsInput, setTagsInput] = useState(active.tags.join(", "));
 
-  // Update inputs only when active values actually change (synchronize with URL search params)
-  // Note: This effect synchronizes form inputs with URL search params (external system).
-  // The setState calls are conditional and necessary for this synchronization.
-  useLayoutEffect(() => {
-    const prev = prevActiveRef.current;
-    // Only update if values actually changed to avoid unnecessary re-renders
-    if (prev.from !== active.from) {
-      // Synchronizing with external system (URL search params), setState is necessary
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setFromInput(active.from);
+  const badges = useMemo(() => {
+    const b: Array<{ key: string; label: string }> = [];
+    if (active.from) b.push({ key: "from", label: `from: ${active.from}` });
+    if (active.to) b.push({ key: "to", label: `to: ${active.to}` });
+    if (active.domain)
+      b.push({ key: "domain", label: `domain: ${active.domain}` });
+    for (const t of active.tags) {
+      const trimmed = t.trim();
+      if (!trimmed) continue;
+      b.push({ key: `tag:${trimmed}`, label: `tag: ${trimmed}` });
     }
-    if (prev.to !== active.to) {
-      setToInput(active.to);
-    }
-    if (prev.domain !== active.domain) {
-      setDomainInput(active.domain);
-    }
-    const activeTagsStr = active.tags.join(", ");
-    const prevTagsStr = prev.tags.join(", ");
-    if (prevTagsStr !== activeTagsStr) {
-      setTagsInput(activeTagsStr);
-    }
-    prevActiveRef.current = active;
-  }, [active]);
+    return b;
+  }, [active.domain, active.from, active.tags, active.to]);
+
+  const hasAnyActive = badges.length > 0;
+
+  const openPanel = () => {
+    // When opening, sync the form inputs to the currently active URL state.
+    setFromInput(active.from);
+    setToInput(active.to);
+    setDomainInput(active.domain);
+    setTagsInput(active.tags.join(", "));
+    setIsOpen(true);
+  };
+
+  const closePanel = () => {
+    setIsOpen(false);
+  };
 
   const applyFilters = () => {
     const next = new URLSearchParams();
@@ -91,7 +81,7 @@ export default function LinksPageClient() {
     for (const t of tags) next.append("tag", t);
 
     const qs = next.toString();
-    router.replace(qs ? `/links?${qs}` : "/links");
+    router.replace(qs ? `/?${qs}` : "/");
   };
 
   const clearFilters = () => {
@@ -99,16 +89,62 @@ export default function LinksPageClient() {
     setToInput("");
     setDomainInput("");
     setTagsInput("");
-    router.replace("/links");
+    router.replace("/");
   };
 
   return (
-    <main className="min-h-screen max-w-4xl mx-auto">
-      <AppHeader />
+    <section className="mb-6 rounded-xl border border-border bg-card p-4">
+      <div className="flex items-center justify-between gap-4">
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-semibold">フィルター</h2>
+            {!hasAnyActive && (
+              <span className="text-xs text-muted-foreground">条件なし</span>
+            )}
+          </div>
 
-      <section className="mb-6 rounded-xl border border-border bg-card p-4">
-        <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {hasAnyActive && (
+            <div className="flex flex-wrap gap-2">
+              {badges.map((b) => (
+                <Badge key={b.key} variant="secondary">
+                  {b.label}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={isOpen ? closePanel : openPanel}
+          >
+            {isOpen ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
+
+          {hasAnyActive && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="px-2"
+              onClick={clearFilters}
+            >
+              全クリア
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {isOpen && (
+        <div className="mt-4 flex flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-muted-foreground">
                 期間（from）
@@ -173,15 +209,7 @@ export default function LinksPageClient() {
             URL にフィルタ条件を保持します（共有・再現できます）。
           </p>
         </div>
-      </section>
-
-      <LinkList
-        limit={active.limit}
-        from={active.from || undefined}
-        to={active.to || undefined}
-        domain={active.domain || undefined}
-        tags={active.tags.length > 0 ? active.tags : undefined}
-      />
-    </main>
+      )}
+    </section>
   );
 }

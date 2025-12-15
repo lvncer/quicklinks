@@ -1,6 +1,6 @@
 "use client";
 
-import LinkCard from "@/components/LinkCard";
+import LinkCard from "@/components/links/LinkCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw } from "lucide-react";
 import useSWR from "swr";
