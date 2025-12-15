@@ -231,7 +231,6 @@ export default function AboutPage() {
                   </div>
                   <h3 className="text-xl font-bold">拡張機能を導入</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Chrome ウェブストアから QuickLinks をインストールします。
                     <Link
                       href="https://chromewebstore.google.com/detail/quicklinks/jofhehfnmliefoipncjbimmomenmegmj?authuser=0&hl=ja&pli=1"
                       target="_blank"
@@ -240,8 +239,7 @@ export default function AboutPage() {
                     >
                       Chrome ウェブストア
                     </Link>
-                    <br />
-                    インストール後、右クリックからリンクを保存できます。
+                    から QuickLinks をインストールします。
                   </p>
                 </div>
 
