@@ -28,9 +28,3 @@
 ## ローカル開発
 
 詳しくは [`documents/LOCAL_SETUP.md`](documents/LOCAL_SETUP.md) を参照。
-
-## 認証について
-
-Clerk の JWT トークンによる認証をしています。
-
-詳細は [`documents/milestones.md`](documents/milestones.md) の M3.1 を参照してください。
