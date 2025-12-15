@@ -20,13 +20,6 @@ quicklinks/
 │
 ├── documents/
 │
-├── infra/
-│   ├── migrations/
-│   │   └── 001_init_links.sql
-│   └── supabase/
-│       ├── schema.sql              # Supabase に流したいスキーマ定義
-│       └── seed_dev.sql            # 開発用シードデータ
-│
 ├── extension/
 │   ├── manifest.json               # Chrome 拡張機能マニフェスト (V3)
 │   ├── options.html                # 設定ページ
@@ -51,8 +44,7 @@ quicklinks/
 │       │   ├── favicon.ico
 │       │   ├── globals.css
 │       │   ├── layout.tsx
-│       │   ├── links/
-│       │   │   └── page.tsx        # リンク一覧（フィルタ付き）
+│       │   ├── page.tsx            # リンク一覧（フィルタ付き）
 │       │   ├── u/
 │       │   │   └── [username]/links/page.tsx # 公開共有ページ `/u/<username>/links`
 │       │   ├── digests/

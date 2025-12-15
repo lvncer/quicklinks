@@ -10,8 +10,8 @@
     - 本番兼開発にするか、dev/prod を分けるか方針を決める
   - `personal-news` モノレポの初期化
     - ルートに `README.md`, `.gitignore` を用意
-  - `infra/migrations/001_init_links.sql` を作成
-    - `links` / `digests` の最低限スキーマを定義
+  - DB 初期スキーマを用意（`links` の最低限スキーマ）
+    - 現在は Ent schema + Atlas versioned migrations（`api/ent/migrate/migrations/`）で管理
   - `api/.env.example`, `web/.env.local.example` を用意
     - `DATABASE_URL`, `NEXT_PUBLIC_API_BASE`, `SHARED_SECRET` などを定義
 
@@ -76,7 +76,7 @@
   - **リンク登録時**: 拡張機能側でトークンがあればそのまま使用、トークンがない/期限切れならログインを促す
 - **実装内容**
   - **データベース**
-    - `user_identifier` を `user_id` にリネーム（`infra/migrations/003_clerk_migration.sql`）
+    - `user_identifier` を `user_id` にリネーム
   - **拡張機能側**
     - `chrome.identity.launchWebAuthFlow` による Clerk 認証フロー（`src/auth.ts`）
     - トークンを Chrome Storage に保存・管理（`src/storage.ts`）
@@ -153,8 +153,8 @@
 - **やること**
   - `api/` に ent を導入し、`ent/schema` で `links` テーブルのスキーマを定義する（まずは `links` のみ ent 化し、将来的に他テーブルも順次 ent に寄せていく）。
   - `model.Link` は外部向け DTO として残しつつ、永続化層では ent のエンティティを利用するように `handler/links.go` / `service` 層をリファクタリングする。
-  - 既存の `infra/migrations/00x_*.sql` によって構築済みの本番 Supabase DB を baseline とみなし、現在の `links` スキーマと同等の初期マイグレーションを ent 側（`ent/migrate`）に定義する。
-  - 今後のスキーマ変更（例: `links.deleted_at` の追加や Index 追加）は ent のマイグレーションを唯一のソースオブトゥルースとして管理し、`infra/migrations` は参照用として残しつつ段階的に廃止する。
+  - 既存の本番 Supabase DB を baseline とみなし、`api/ent/migrate/migrations/20251212121929_baseline.sql` を起点に Atlas versioned migrations を運用する。
+  - 今後のスキーマ変更（例: `links.deleted_at` の追加や Index 追加）は Ent schema を唯一のソースオブトゥルースとして管理し、`api/ent/migrate/migrations/` で versioned migrations を管理する。
   - CI に ent のコード生成確認（`go generate ./...` 相当）と `go fmt ./...` を追加し、本番 Supabase に対するマイグレーション適用は専用コマンドで手動実行する運用を整える（自動 migrate は行わない）。
 
 ## M3.8.5: API 本番ホスティングの Render 移行 ✅
@@ -216,7 +216,7 @@
 
 - **目的**: 保存済みリンクの公開日（`published_at`）やメモを Web から直接編集・削除できるようにする。
 - **やること**
-  - DB は既存の `published_at` / `note` を利用（変更履歴は `infra/migrations` を参照）
+  - DB は既存の `published_at` / `note` を利用（スキーマ変更が必要なら `api/ent/migrate/migrations/` の Atlas versioned migrations で管理）
   - API: `PATCH /api/links/:id` で `published_at` / `note` を更新、`DELETE /api/links/:id` はハードデリート（将来は監査用にソフトデリート検討）
   - Web: リンク一覧（または詳細）で日付・メモの編集 UI を用意し、削除アクションも提供
 

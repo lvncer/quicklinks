@@ -26,22 +26,23 @@
 
 ## API サーバー（Go + Gin）
 
-| 項目            | 技術                                           | 用途 / 補足                                                           |
-| --------------- | ---------------------------------------------- | --------------------------------------------------------------------- |
-| ランタイム / FW | Go + Gin                                       | REST API (`/api/links`, `/api/og`)                                    |
-| ホスティング    | Render                                         |                                                                       |
-| DB クライアント | pgx (postgres)                                 | Supabase/Postgres へ接続                                              |
-| 認証            | clerk-sdk-go + JWT middleware                  | `Authorization: Bearer <JWT>` を検証し `user_id` をコンテキストに設定 |
-| OGP 取得        | 独自サービス（`internal/service/metadata.go`） | `/api/og` で利用                                                      |
-| ORM             | ent                                            | スキーマ定義とコード生成を一元化                                      |
-| 設定            | `internal/config`                              | 環境変数読み込み (`DATABASE_URL`, `CLERK_SECRET_KEY`, etc.)           |
+| 項目                           | 技術                                           | 用途 / 補足                                                           |
+| ------------------------------ | ---------------------------------------------- | --------------------------------------------------------------------- |
+| ランタイム / FW                | Go + Gin                                       | REST API (`/api/links`, `/api/og`)                                    |
+| ホスティング                   | Render                                         |                                                                       |
+| DB クライアント                | pgx (postgres)                                 | Supabase/Postgres へ接続                                              |
+| 認証                           | clerk-sdk-go + JWT middleware                  | `Authorization: Bearer <JWT>` を検証し `user_id` をコンテキストに設定 |
+| OGP 取得                       | 独自サービス（`internal/service/metadata.go`） | `/api/og` で利用                                                      |
+| ORM                            | ent                                            | スキーマ定義とコード生成を一元化                                      |
+| マイグレーションバージョン管理 | atlas                                          |                                                                       |
+| 設定                           | `internal/config`                              | 環境変数読み込み (`DATABASE_URL`, `CLERK_SECRET_KEY`, etc.)           |
 
 ## データベース / インフラ
 
 | 項目             | 技術                         | 用途 / 補足                                                                                               |
 | ---------------- | ---------------------------- | --------------------------------------------------------------------------------------------------------- |
 | DB               | Supabase / Postgres          | 本番・開発で利用                                                                                          |
-| スキーマ管理     | `infra/migrations` (SQL)     | 破壊的変更は開発用で検証してから反映                                                                      |
+| スキーマ管理     | Ent schema + Atlas (SQL)     | `api/ent/migrate/migrations/` で versioned migrations を管理（`api/atlas.hcl`）                           |
 | コンテナ         | Dockerfile (web), API は既存 | Web は M3.7 で Docker 対応、API は既にコンテナ対応済み                                                    |
 | CI / CD          | GitHub Actions               | matrix で `web` / `extension` / `api` の lint/build/test、`--frozen-lockfile`、audit、`go fmt ./...` など |
 | 依存アップデート | Dependabot                   | patch/minor 自動マージ、major はレビュー                                                                  |
