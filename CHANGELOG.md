@@ -5,6 +5,12 @@
 フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) に基づいており、
 このプロジェクトは [Semantic Versioning](https://semver.org/lang/ja/) に準拠しています。
 
+## 0.4.2.1
+
+- Deleted
+
+  - links テーブルから publised_at カラム を削除 ([#33](https://github.com/lvncer/quicklinks/pull/33))
+
 ## 0.3.9 - 2025-12-12
 
 - Added
