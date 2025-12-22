@@ -110,12 +110,12 @@ export default function LinkCard({ link }: { link: LinkItem }) {
                 <span className="truncate max-w-[150px]">{link.domain}</span>
               </div>
             </div>
-            <CardTitle className="text-lg leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+            <CardTitle className="text-lg leading-snug truncate group-hover:text-primary transition-colors">
               <Link
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline decoration-primary/50 underline-offset-4"
+                className="block truncate hover:underline decoration-primary/50 underline-offset-4"
               >
                 {displayTitle}
               </Link>
