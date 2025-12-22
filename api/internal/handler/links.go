@@ -269,5 +269,6 @@ func (h *LinksHandler) GetOGP(c *gin.Context) {
 		"title":       meta.Title,
 		"description": meta.Description,
 		"image":       meta.Image,
+		"blocked":     meta.Blocked,
 	})
 }

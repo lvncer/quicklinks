@@ -19,6 +19,7 @@ type Metadata struct {
 	Description string
 	Image       string
 	Source      string
+	Blocked     bool
 }
 
 // FetchMetadata scrapes the URL to find OGP title, description, and image.
@@ -43,14 +44,18 @@ func FetchMetadata(targetURL string) (*Metadata, error) {
 		fb, _, fbErr := fetchAndParse(ctx, client, jinaURL)
 		if fbErr != nil {
 			log.Printf("failed to fetch metadata via jina proxy: %v (target=%s)", fbErr, targetURL)
+			meta.Source = "direct"
+			meta.Blocked = sanitizeMetadata(meta)
 			return meta, nil
 		}
 		merged := mergePreferExisting(meta, fb)
 		merged.Source = "jina"
+		merged.Blocked = sanitizeMetadata(merged)
 		return merged, nil
 	}
 
 	meta.Source = "direct"
+	meta.Blocked = sanitizeMetadata(meta)
 	return meta, nil
 }
 
@@ -60,22 +65,66 @@ func looksLikeBotChallenge(title string) bool {
 }
 
 func mergePreferExisting(primary, fallback *Metadata) *Metadata {
+	// Treat bot-challenge content as missing to avoid contaminating UI/DB with "Just a moment...".
+	primaryTitle := primary.Title
+	primaryDesc := primary.Description
+	if looksLikeBotChallenge(primaryTitle) {
+		primaryTitle = ""
+		primaryDesc = ""
+	}
+	fallbackTitle := fallback.Title
+	fallbackDesc := fallback.Description
+	if looksLikeBotChallenge(fallbackTitle) {
+		fallbackTitle = ""
+		fallbackDesc = ""
+	}
+
 	out := &Metadata{
-		Title:       primary.Title,
-		Description: primary.Description,
+		Title:       primaryTitle,
+		Description: primaryDesc,
 		Image:       primary.Image,
 		Source:      primary.Source,
 	}
 	if out.Title == "" {
-		out.Title = fallback.Title
+		out.Title = fallbackTitle
 	}
 	if out.Description == "" {
-		out.Description = fallback.Description
+		out.Description = fallbackDesc
 	}
 	if out.Image == "" {
 		out.Image = fallback.Image
 	}
 	return out
+}
+
+func sanitizeMetadata(m *Metadata) (blocked bool) {
+	if m == nil {
+		return false
+	}
+	// If we still have a bot-challenge title, drop title/description (avoid contamination).
+	if looksLikeBotChallenge(m.Title) {
+		m.Title = ""
+		m.Description = ""
+		blocked = true
+	}
+
+	m.Title = strings.TrimSpace(m.Title)
+	m.Description = strings.TrimSpace(m.Description)
+	m.Image = strings.TrimSpace(m.Image)
+
+	if len(m.Description) > 2000 {
+		m.Description = m.Description[:2000]
+	}
+
+	// Image must be an absolute http(s) URL. Otherwise, drop it.
+	if m.Image != "" {
+		u, err := url.Parse(m.Image)
+		if err != nil || u == nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
+			m.Image = ""
+		}
+	}
+
+	return blocked
 }
 
 func fetchAndParse(ctx context.Context, client *http.Client, target string) (*Metadata, int, error) {

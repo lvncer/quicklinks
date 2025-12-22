@@ -61,6 +61,7 @@ export default function LinkCard({ link }: { link: LinkItem }) {
   const displayImage = ogData?.image || link.og_image;
   const displayDesc = ogData?.description || link.description;
   const displayTitle = ogData?.title || link.title || "No Title";
+  const showOgpBlockedNotice = !!ogData?.blocked;
 
   // 日付の表示ロジック
   // 保存日を表示（published_at/公開概念は撤去）
@@ -129,11 +130,19 @@ export default function LinkCard({ link }: { link: LinkItem }) {
                 <Skeleton className="h-3 w-2/3" />
               </div>
             ) : (
-              displayDesc && (
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {displayDesc}
-                </p>
-              )
+              <>
+                {displayDesc && (
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {displayDesc}
+                  </p>
+                )}
+                {showOgpBlockedNotice && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    このサイトは OGP
+                    を取得できませんでした（サイト側の制限の可能性があります）
+                  </p>
+                )}
+              </>
             )}
 
             {/* User Note */}
