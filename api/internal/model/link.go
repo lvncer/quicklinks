@@ -8,6 +8,9 @@ type LinkCreateRequest struct {
 	PageURL string   `json:"page" binding:"required"`
 	Note    string   `json:"note"`
 	Tags    []string `json:"tags"`
+	// Optional client-provided metadata (best-effort).
+	Description string `json:"description"`
+	OGImage     string `json:"og_image"`
 	// Note: user_id is now determined by the authenticated user, not from request body
 }
 

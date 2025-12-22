@@ -61,19 +61,41 @@ func (h *LinksHandler) CreateLink(c *gin.Context) {
 	// Note: In production, this should probably be done asynchronously
 	// or in a background job to avoid slowing down the save request.
 	// For MVP, we do it synchronously but with a short timeout inside the service.
-	var description, ogImage string
-	meta, err := service.FetchMetadata(req.URL)
-	if err == nil {
-		description = meta.Description
-		ogImage = meta.Image
-		// If title was not provided or is just the URL, use OGP title
-		if req.Title == "" || req.Title == req.URL {
-			if meta.Title != "" {
-				req.Title = meta.Title
-			}
+	description := strings.TrimSpace(req.Description)
+	ogImage := strings.TrimSpace(req.OGImage)
+
+	// Minimal guards for client-provided metadata.
+	// - description: cap length to keep payload reasonable
+	// - og_image: must be an absolute http(s) URL; otherwise treat as empty
+	if len(description) > 2000 {
+		description = description[:2000]
+	}
+	if ogImage != "" {
+		u, err := url.Parse(ogImage)
+		if err != nil || u == nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
+			ogImage = ""
 		}
-	} else {
-		log.Printf("failed to fetch metadata for %s: %v", req.URL, err)
+	}
+
+	// If client provided OGP fields are missing, fetch metadata server-side.
+	if description == "" || ogImage == "" {
+		meta, err := service.FetchMetadata(req.URL)
+		if err == nil {
+			if description == "" {
+				description = meta.Description
+			}
+			if ogImage == "" {
+				ogImage = meta.Image
+			}
+			// If title was not provided or is just the URL, use OGP title
+			if req.Title == "" || req.Title == req.URL {
+				if meta.Title != "" {
+					req.Title = meta.Title
+				}
+			}
+		} else {
+			log.Printf("failed to fetch metadata for %s: %v", req.URL, err)
+		}
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
