@@ -35,27 +35,30 @@ func FetchMetadata(targetURL string) (*Metadata, error) {
 	if err != nil {
 		return nil, err
 	}
+	directChallenge := looksLikeBotChallenge(meta.Title)
+
 	// If direct fetch likely hit bot protection (or no useful tags), try a proxy fetch.
 	//
 	// Note: Some sites behind Cloudflare may return "Just a moment..." pages to cloud IPs
 	// (even with a browser UA), resulting in empty OG tags.
-	if status != 200 || looksLikeBotChallenge(meta.Title) || (meta.Image == "" && meta.Title == "" && meta.Description == "") {
+	if status != 200 || directChallenge || (meta.Image == "" && meta.Title == "" && meta.Description == "") {
 		jinaURL := "https://r.jina.ai/" + targetURL
 		fb, _, fbErr := fetchAndParse(ctx, client, jinaURL)
 		if fbErr != nil {
 			log.Printf("failed to fetch metadata via jina proxy: %v (target=%s)", fbErr, targetURL)
 			meta.Source = "direct"
-			meta.Blocked = sanitizeMetadata(meta)
+			meta.Blocked = sanitizeMetadata(meta, directChallenge)
 			return meta, nil
 		}
+		fallbackChallenge := looksLikeBotChallenge(fb.Title)
 		merged := mergePreferExisting(meta, fb)
 		merged.Source = "jina"
-		merged.Blocked = sanitizeMetadata(merged)
+		merged.Blocked = sanitizeMetadata(merged, directChallenge || fallbackChallenge)
 		return merged, nil
 	}
 
 	meta.Source = "direct"
-	meta.Blocked = sanitizeMetadata(meta)
+	meta.Blocked = sanitizeMetadata(meta, false)
 	return meta, nil
 }
 
@@ -97,7 +100,7 @@ func mergePreferExisting(primary, fallback *Metadata) *Metadata {
 	return out
 }
 
-func sanitizeMetadata(m *Metadata) (blocked bool) {
+func sanitizeMetadata(m *Metadata, hadChallenge bool) (blocked bool) {
 	if m == nil {
 		return false
 	}
@@ -106,6 +109,7 @@ func sanitizeMetadata(m *Metadata) (blocked bool) {
 		m.Title = ""
 		m.Description = ""
 		blocked = true
+		hadChallenge = true
 	}
 
 	m.Title = strings.TrimSpace(m.Title)
@@ -122,6 +126,12 @@ func sanitizeMetadata(m *Metadata) (blocked bool) {
 		if err != nil || u == nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
 			m.Image = ""
 		}
+	}
+
+	// If we detected a bot challenge earlier but ended up with empty title+description,
+	// mark it as blocked so clients can show user-facing feedback.
+	if !blocked && hadChallenge && m.Title == "" && m.Description == "" {
+		blocked = true
 	}
 
 	return blocked
