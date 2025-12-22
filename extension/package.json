@@ -9,7 +9,7 @@
     "clean": "rm -rf dist/"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.268",
+    "@types/chrome": "^0.1.32",
     "@types/node": "^20.0.0",
     "esbuild": "^0.21.0",
     "lucide-static": "^0.555.0",
