@@ -15,11 +15,11 @@ import ScrollReveal from "@/components/motion/ScrollReveal";
 import { ScrollStagger } from "@/components/motion/ScrollStagger";
 
 export const metadata: Metadata = {
-  title: "QuickLinks - リンク保存が秒で終わる",
+  title: "clipgest - リンク保存が秒で終わる",
   description:
     "気になった記事を一瞬で保存し、後でまとめて読めるツール。ブラウザ拡張で簡単保存、Web でスッキリ閲覧。",
   openGraph: {
-    title: "QuickLinks - リンク保存が秒で終わる",
+    title: "clipgest - リンク保存が秒で終わる",
     description: "気になった記事を一瞬で保存し、後でまとめて読めるツール。",
     images: ["/images/toppage.jpeg"],
   },
@@ -160,7 +160,7 @@ export default function AboutPage() {
               <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-border">
                 <Image
                   src="/images/extension.jpeg"
-                  alt="QuickLinks Extension Demo"
+                  alt="clipgest Extension Demo"
                   fill
                   className="object-cover"
                 />
@@ -196,7 +196,7 @@ export default function AboutPage() {
               <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-border">
                 <Image
                   src="/images/toppage.jpeg"
-                  alt="QuickLinks Dashboard Demo"
+                  alt="clipgest Dashboard Demo"
                   fill
                   className="object-cover"
                 />
@@ -239,7 +239,7 @@ export default function AboutPage() {
                     >
                       Chrome ウェブストア
                     </Link>
-                    から QuickLinks をインストールします。
+                    から拡張機能をインストールします。
                   </p>
                 </div>
 
@@ -289,7 +289,7 @@ export default function AboutPage() {
                 もっと快適に。
               </h2>
               <p className="text-lg text-muted-foreground">
-                QuickLinks で、積読を消化する新しい習慣を始めましょう。
+                clipgest で、積読を消化する新しい習慣を始めましょう。
                 <br />
                 完全無料で利用できます。
               </p>
@@ -312,9 +312,9 @@ export default function AboutPage() {
       <footer className="py-12 px-4 bg-muted/50 border-t border-border">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col gap-2 items-center md:items-start">
-            <span className="text-lg font-bold">QuickLinks</span>
+            <span className="text-lg font-bold">clipgest</span>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} QuickLinks. All rights reserved.
+              © {new Date().getFullYear()} clipgest. All rights reserved.
             </p>
           </div>
           <div className="flex gap-8 text-sm text-muted-foreground">

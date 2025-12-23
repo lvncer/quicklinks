@@ -246,6 +246,7 @@
 
 - **目的**: まずは壊さずに **`clipgest.com` / `www.clipgest.com`** で動く状態にする（内部の変数名や識別子は後回し）。
 - **前提（方針）**
+  - **正規 URL は `https://www.clipgest.com`**（裸 `https://clipgest.com` は `www` に 301）
   - 旧ドメイン（例: `*.vercel.app`）は当面残し、**リダイレクトで段階移行**する
   - API のドメインは変えない
   - 将来 `app.` サブドメイン分離はするが今回はやらない
@@ -260,15 +261,31 @@
       - Web: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
       - API: `CLERK_SECRET_KEY`
     - Allowed Origins / Redirect URLs に `https://clipgest.com` と `https://www.clipgest.com` を登録
-    - 移行期間中は旧ドメインも併記し、完全移行のタイミングで削除
+    - 移行期間中は旧ドメイン（例: `https://quicklinks-zeta.vercel.app`）も併記し、完全移行のタイミングで削除
+    - **ローカルは本番にならない**: 使うキーで環境が決まるので、ローカルでは Development のキーを使えば OK（Production のキーをローカルに入れない）
   - API（CORS）
     - `ALLOWED_ORIGINS` に `https://clipgest.com, https://www.clipgest.com` を追加（移行期間は旧ドメインも併記）
   - Chrome 拡張（Web↔ 拡張の認証同期が死にやすいので必須）
     - `manifest(.dev).json` の `content_scripts[].matches` に
       - `https://clipgest.com/*`
       - `https://www.clipgest.com/*`
-      - （移行期間のみ）旧ドメインも併記
+      - （移行期間のみ）旧ドメイン（例: `https://quicklinks-zeta.vercel.app/*`）も併記
     - ※ この段階では **変数名/JWT テンプレ名/識別子のリネームはやらない**
+  - Web（環境変数の注意）
+    - `NEXT_PUBLIC_WEB_ORIGIN` をセットする場合は **必ず正規の `https://www.clipgest.com`** にする（それ以外のホストは 301 で `www` に寄せる）
+      - `NEXT_PUBLIC_WEB_ORIGIN` と実際のアクセス origin がズレると、拡張への認証同期（postMessage）が動かない可能性があるため
+
+- **検証（段階チェック）**
+  - Web（Clerk Production）
+    - `https://www.clipgest.com` でサインアップ/サインインできる
+    - 裸 `https://clipgest.com` が `www` に 301 される
+    - 旧 `https://quicklinks-zeta.vercel.app` が `www` に 301 される（移行期間）
+  - Web↔拡張の同期
+    - `www` 上でログイン後、拡張にトークンが同期される（未認証扱いにならない）
+    - 旧ドメイン経由でアクセスした場合も（最終的に `www` に寄るので）同期が動く
+  - API / CORS
+    - Web からリンク一覧が取得できる（CORS エラーにならない）
+    - 拡張から保存でき、Web 側で表示できる
 
 ## M4.1.6: clipgest への完全移行（リネーム清掃）
 
