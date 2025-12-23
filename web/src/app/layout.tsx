@@ -15,7 +15,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const defaultSiteUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://www.clipgest.com"
+    : "http://localhost:3000";
+
+const siteUrl = process.env.NEXT_PUBLIC_WEB_ORIGIN || defaultSiteUrl;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "clipgest",
   description:
     "clipgest is a tool that allows you to save links to your browser and view them later.",

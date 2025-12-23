@@ -18,6 +18,8 @@
     {
       "matches": [
         "http://localhost:3000/*",
+        "https://www.clipgest.com/*",
+        "https://clipgest.com/*",
         "https://quicklinks-zeta.vercel.app/*"
       ],
       "js": ["dist/web-auth-bridge.js"],
