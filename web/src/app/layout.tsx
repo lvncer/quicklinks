@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "QuickLinks",
+  title: "clipgest",
   description:
-    "QuickLinks is a tool that allows you to save links to your browser and view them later.",
+    "clipgest is a tool that allows you to save links to your browser and view them later.",
 };
 
 export default function RootLayout({

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | QuickLinks",
+  title: "Privacy Policy | clipgest",
 };
 
 export default function PrivacyPage() {
@@ -9,14 +9,14 @@ export default function PrivacyPage() {
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-12">
       <section>
         <h1 className="mb-4 text-3xl font-bold">
-          QuickLinks プライバシーポリシー
+          clipgest プライバシーポリシー
         </h1>
         <p className="text-sm text-muted-foreground">最終更新日: 2025-12-03</p>
       </section>
 
       <section className="space-y-4 text-sm leading-relaxed">
         <p>
-          本プライバシーポリシーは、個人開発サービス「QuickLinks」（以下「本サービス」）における、
+          本プライバシーポリシーは、個人開発サービス「clipgest」（以下「本サービス」）における、
           ユーザーの情報の取り扱いについて定めるものです。
         </p>
 
