@@ -21,7 +21,7 @@
 | [M3.9](#m39-ルートページを紹介-lp-化)                           | ルートページを紹介 LP 化                             | ✅   | 2025-12-12 | [#24](https://github.com/lvncer/quicklinks/pull/24) |
 | [M4](#m4-検索フィルタリング--タグ使い勝手の向上-)               | 検索フィルタリング（タグ使い勝手の向上）             | ✅   | 2025-12-15 | [#25](https://github.com/lvncer/quicklinks/pull/25) |
 | [M4.1](#m41-リンク一覧のルート化--フィルター-ui-改善)           | リンク一覧のルート化・フィルター UI 改善             | ✅   | 2025-12-15 | [#26](https://github.com/lvncer/quicklinks/pull/26) |
-| [M4.1.5](#m415-clipgest-への最小移行ドメイン変更--clerk-本番化) | clipgest への最小移行（ドメイン変更 + Clerk 本番化） |      |            |                                                     |
+| [M4.1.5](#m415-clipgest-への最小移行ドメイン変更--clerk-本番化) | clipgest への最小移行（ドメイン変更 + Clerk 本番化） | ✅   | 2025-12-25 | [#43](https://github.com/lvncer/clipgest/pull/43)   |
 | [M4.1.6](#m416-clipgest-への完全移行リネーム清掃)               | clipgest への完全移行（リネーム清掃）                |      |            |                                                     |
 | [M4.2](#m42-週次月次クイックフィルター)                         | 週次/月次クイックフィルター                          |      |            |                                                     |
 | [M4.3](#m43-ogp-取得の保存時集約read-api-は-db-参照のみ)        | OGP 取得の保存時集約（Read API は DB 参照のみ）      |      |            |                                                     |
@@ -251,6 +251,7 @@
   - API のドメインは変えない
   - 将来 `app.` サブドメイン分離はするが今回はやらない
 - **やること（最低限）**
+
   - Web/Vercel
     - `clipgest.com` と `www.clipgest.com` を Vercel に割り当て
     - 旧 `*.vercel.app` → 新ドメインへリダイレクト（段階移行）
@@ -280,7 +281,7 @@
     - `https://www.clipgest.com` でサインアップ/サインインできる
     - 裸 `https://clipgest.com` が `www` に 301 される
     - 旧 `https://quicklinks-zeta.vercel.app` が `www` に 301 される（移行期間）
-  - Web↔拡張の同期
+  - Web↔ 拡張の同期
     - `www` 上でログイン後、拡張にトークンが同期される（未認証扱いにならない）
     - 旧ドメイン経由でアクセスした場合も（最終的に `www` に寄るので）同期が動く
   - API / CORS
