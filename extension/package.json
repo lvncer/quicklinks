@@ -12,7 +12,7 @@
     "@types/chrome": "^0.0.268",
     "@types/node": "^20.0.0",
     "esbuild": "^0.21.0",
-    "lucide-static": "^0.555.0",
+    "lucide-static": "^0.556.0",
     "sharp": "^0.33.0",
     "typescript": "^5.4.0"
   }
