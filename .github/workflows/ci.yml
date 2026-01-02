@@ -74,7 +74,7 @@ jobs:
         run: bun run lint
 
       - name: Build web
-        if: matrix.service == 'web'
+        if: matrix.service == 'web' && github.actor != 'dependabot[bot]'
         working-directory: web
         run: bun run build
 
