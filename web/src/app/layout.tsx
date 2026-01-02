@@ -4,7 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { jaJP } from "@clerk/localizations";
 import "./globals.css";
 import { ExtensionAuthSync } from "../components/ExtensionAuthSync";
-import { ThemeProvider } from "../components/ThemeProvider";
+import { ThemeProvider } from "../components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

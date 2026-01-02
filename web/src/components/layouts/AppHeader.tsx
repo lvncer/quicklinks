@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { ModeToggle } from "../theme-toggle";
 
 export default function AppHeader() {
   const { theme, resolvedTheme } = useTheme();
@@ -29,7 +30,10 @@ export default function AppHeader() {
             priority
           />
         </Link>
-        <UserButton />
+        <div className="flex items-center gap-4">
+          <ModeToggle />
+          <UserButton />
+        </div>
       </div>
     </header>
   );
