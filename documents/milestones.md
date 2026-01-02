@@ -22,6 +22,7 @@
 | [M4](#m4-検索フィルタリング--タグ使い勝手の向上-)               | 検索フィルタリング（タグ使い勝手の向上）             | ✅   | 2025-12-15 | [#25](https://github.com/lvncer/quicklinks/pull/25) |
 | [M4.1](#m41-リンク一覧のルート化--フィルター-ui-改善)           | リンク一覧のルート化・フィルター UI 改善             | ✅   | 2025-12-15 | [#26](https://github.com/lvncer/quicklinks/pull/26) |
 | [M4.1.5](#m415-clipgest-への最小移行ドメイン変更--clerk-本番化) | clipgest への最小移行（ドメイン変更 + Clerk 本番化） | ✅   | 2025-12-25 | [#43](https://github.com/lvncer/clipgest/pull/43)   |
+| [M4.1.5.1](#m4151-アプリアイコンとバナー画像の表示)             | アプリアイコンとバナー画像の表示                     |      |            |                                                     |
 | [M4.1.6](#m416-clipgest-への完全移行リネーム清掃)               | clipgest への完全移行（リネーム清掃）                |      |            |                                                     |
 | [M4.2](#m42-週次月次クイックフィルター)                         | 週次/月次クイックフィルター                          |      |            |                                                     |
 | [M4.3](#m43-ogp-取得の保存時集約read-api-は-db-参照のみ)        | OGP 取得の保存時集約（Read API は DB 参照のみ）      |      |            |                                                     |
@@ -287,6 +288,31 @@
   - API / CORS
     - Web からリンク一覧が取得できる（CORS エラーにならない）
     - 拡張から保存でき、Web 側で表示できる
+
+## M4.1.5.1: アプリアイコンとバナー画像の表示
+
+- **目的**: アプリアイコン（白黒で分けられた png ファイル）とバナー文字の画像（CLIPGEST.png）を Web のトップページ（/about）とアプリページ（/）のヘッダーに表示し、ブランディングを強化する。
+- **やること**
+  - **favicon の設定**
+    - `clip-black.ico` / `clip-white.ico` を favicon として設定（両ページ共通）
+  - **Web 側（/about ページ）**
+    - `WebHeader` コンポーネント（`web/src/components/layouts/WebHeader.tsx`）を更新
+    - アプリアイコン（`clip-black.png` / `clip-white.png`）を表示
+      - システムのダークモード設定に応じて適切なアイコンを選択
+    - バナー文字画像（`CLIPGEST.png`）を表示
+    - Next.js の `Image` コンポーネントを使用して最適化
+  - **アプリ側（/ ページ）**
+    - `AppHeader` コンポーネント（`web/src/components/layouts/AppHeader.tsx`）を更新
+    - アプリアイコン（`clip-black.png` / `clip-white.png`）を表示
+      - システムのダークモード設定に応じて適切なアイコンを選択
+    - バナー文字画像は表示しない（アプリアイコンのみ）
+    - Next.js の `Image` コンポーネントを使用して最適化
+  - **ダークモード対応**
+    - `next-themes` または CSS の `prefers-color-scheme` を使用してシステム設定を検出
+    - ダークモード時は `clip-white.png`、ライトモード時は `clip-black.png` を表示
+  - **レスポンシブ対応**
+    - モバイル/デスクトップで適切なサイズで表示
+    - 既存のレイアウトを崩さないように調整
 
 ## M4.1.6: clipgest への完全移行（リネーム清掃）
 
