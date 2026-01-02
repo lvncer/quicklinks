@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { jaJP } from "@clerk/localizations";
 import "./globals.css";
 import { ExtensionAuthSync } from "../components/ExtensionAuthSync";
+import { ThemeProvider } from "../components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,12 @@ export const metadata: Metadata = {
   title: "clipgest",
   description:
     "clipgest is a tool that allows you to save links to your browser and view them later.",
+  icons: {
+    icon: [
+      { url: "/images/clip-black.ico", media: "(prefers-color-scheme: light)" },
+      { url: "/images/clip-white.ico", media: "(prefers-color-scheme: dark)" },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -36,12 +43,19 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider localization={jaJP}>
-      <html lang="ja">
+      <html lang="ja" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <ExtensionAuthSync />
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ExtensionAuthSync />
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
